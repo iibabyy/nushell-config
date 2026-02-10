@@ -207,7 +207,7 @@ def gtree-remove [
     if not $yes {
         let confirm_delete = (gum confirm $"Are you sure you want to delete ($worktree_path)?" --default)
         if not $confirm_delete {
-            return $"(ansi yellow)Worktree deletion cancelled(ansi reset)"
+            return "Worktree deletion cancelled"
         }
     }
 
@@ -269,10 +269,10 @@ def handle-worktree-removal [
         # Orphaned directory
         # print $"DEBUG: Orphaned worktree directory found, removing manually"
         remove-orphaned-directory $worktree_path
-        $"(ansi yellow)Removed orphaned worktree directory: ($worktree_path)(ansi reset)"
+        $"Removed orphaned worktree directory: ($worktree_path)"
     } else {
         # print $"DEBUG: Worktree not found in git worktree list and directory doesn't exist"
-        $"(ansi yellow)Worktree not found: ($worktree_path)(ansi reset)"
+        $"Worktree not found: ($worktree_path)"
     }
 }
 
@@ -298,7 +298,7 @@ def handle-branch-deletion-direct [
     branch_name?: string
 ]: nothing -> string {
     if $branch_name == null {
-        return $"(ansi yellow)Warning: could not find branch for worktree, skipping branch deletion(ansi reset)"
+        return "Warning: could not find branch for worktree, skipping branch deletion"
     }
 
     let result = (delete-local-branch $branch_name $workdir --force=$force)

@@ -147,10 +147,10 @@ export def copy-to-clipboard [
     path: path
 ]: nothing -> string {
     try {
-        $path | clip
-        $"(ansi green)Path copied to clipboard ($path)(ansi reset)"
-    } catch {
-        $"(ansi yellow)Could not copy path to clipboard(ansi reset)"
+        $path | clipboard copy | ignore
+        $"Path copied to clipboard ($path)"
+    } catch { |err|
+        $"Could not copy path to clipboard: ($err.msg)"
     }
 }
 
@@ -270,7 +270,7 @@ export def delete-local-branch [
     if $result.exit_code != 0 {
         {
             success: false,
-            message: $"(ansi yellow)Warning: could not delete local branch ($branch): ($result.stderr | str trim)(ansi reset)"
+            message: $"Warning: could not delete local branch ($branch): ($result.stderr | str trim)"
         }
     } else {
         {
@@ -291,12 +291,12 @@ export def delete-remote-branch [
     if $result.exit_code != 0 {
         {
             success: false,
-            message: $"(ansi yellow)Warning: could not delete remote branch ($remote)/($branch): ($result.stderr | str trim)(ansi reset)"
+            message: $"Warning: could not delete remote branch ($remote)/($branch): ($result.stderr | str trim)"
         }
     } else {
         {
             success: true,
-            message: $"(ansi green)Remote branch deleted: ($remote)/($branch)(ansi reset)"
+            message: $"Remote branch deleted: ($remote)/($branch)"
         }
     }
 }
