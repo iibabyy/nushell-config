@@ -23,9 +23,10 @@ export def "gum input" [
     if $show_help { $args = ($args | append "--show-help") }
     if $timeout != null { $args = ($args | append [--timeout ($timeout | to-go-duration)]) }
 
-    let result = ^$gum input ...$args | complete
-    if $result.exit_code != 0 {
-        error make --unspanned { msg: $"gum input failed \(exit ($result.exit_code)): ($result.stderr | str trim)" }
+    let output = try {
+        ^gum input ...$args
+    } catch {
+        error make --unspanned { msg: $"gum input failed with exit code ($env.LAST_EXIT_CODE)" }
     }
-    $result.stdout | str trim --right --char "\n"
+    $output | str trim --right --char "\n"
 }

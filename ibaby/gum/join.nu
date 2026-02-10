@@ -12,9 +12,10 @@ export def "gum join" [
     if $horizontal { $args = ($args | append "--horizontal") }
     if $vertical { $args = ($args | append "--vertical") }
 
-    let result = ^$gum join ...$args ...$text | complete
-    if $result.exit_code != 0 {
-        error make --unspanned { msg: $"gum join failed \(exit ($result.exit_code)): ($result.stderr | str trim)" }
+    let output = try {
+        ^gum join ...$args ...$text
+    } catch {
+        error make --unspanned { msg: $"gum join failed with exit code ($env.LAST_EXIT_CODE)" }
     }
-    $result.stdout | str trim --right --char "\n"
+    $output | str trim --right --char "\n"
 }

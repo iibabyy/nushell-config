@@ -21,8 +21,9 @@ export def "gum pager" [
         ""
     }
 
-    let result = $text | ^$gum pager ...$args | complete
-    if $result.exit_code != 0 {
-        error make --unspanned { msg: $"gum pager failed \(exit ($result.exit_code)): ($result.stderr | str trim)" }
+    try {
+        $text | ^gum pager ...$args
+    } catch {
+        error make --unspanned { msg: $"gum pager failed with exit code ($env.LAST_EXIT_CODE)" }
     }
 }

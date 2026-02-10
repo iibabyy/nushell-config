@@ -32,9 +32,10 @@ export def "gum table" [
         _ => ""
     }
 
-    let result = $csv_input | ^$gum table ...$args | complete
-    if $result.exit_code != 0 {
-        error make --unspanned { msg: $"gum table failed \(exit ($result.exit_code)): ($result.stderr | str trim)" }
+    let output = try {
+        $csv_input | ^gum table ...$args
+    } catch {
+        error make --unspanned { msg: $"gum table failed with exit code ($env.LAST_EXIT_CODE)" }
     }
-    $result.stdout | str trim --right --char "\n"
+    $output | str trim --right --char "\n"
 }

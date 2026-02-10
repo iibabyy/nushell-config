@@ -13,14 +13,14 @@ export def "gum format" [
     if $language != null { $args = ($args | append [--language $language]) }
     if $type != null { $args = ($args | append [--type $type]) }
 
-    let result = if ($input | is-not-empty) {
-        $input | ^$gum format ...$args | complete
-    } else {
-        ^$gum format ...$args ...$template | complete
+    let output = try {
+        if ($input | is-not-empty) {
+            $input | ^gum format ...$args
+        } else {
+            ^gum format ...$args ...$template
+        }
+    } catch {
+        error make --unspanned { msg: $"gum format failed with exit code ($env.LAST_EXIT_CODE)" }
     }
-
-    if $result.exit_code != 0 {
-        error make --unspanned { msg: $"gum format failed \(exit ($result.exit_code)): ($result.stderr | str trim)" }
-    }
-    $result.stdout | str trim --right --char "\n"
+    $output | str trim --right --char "\n"
 }

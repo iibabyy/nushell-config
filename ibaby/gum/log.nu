@@ -22,8 +22,9 @@ export def "gum log" [
     if $time != null { $args = ($args | append [--time $time]) }
     if $min_level != null { $args = ($args | append [--min-level $min_level]) }
 
-    let result = ^$gum log ...$args ...$text | complete
-    if $result.exit_code != 0 {
-        error make --unspanned { msg: $"gum log failed \(exit ($result.exit_code)): ($result.stderr | str trim)" }
+    try {
+        ^gum log ...$args ...$text
+    } catch {
+        error make --unspanned { msg: $"gum log failed with exit code ($env.LAST_EXIT_CODE)" }
     }
 }

@@ -197,47 +197,49 @@ def gtree-remove [
         null
     }
 
+    # VALIDATION PHASE: Check everything before prompting
     # Check for uncommitted changes (use branch span for error reporting)
     if not $force and ($worktree_path | path exists) {
         # print $"DEBUG: Checking for uncommitted changes in ($worktree_path)"
         validate-worktree-clean $worktree_path $spanned_branch
     }
 
+    # PROMPTING PHASE: Ask user for all confirmations BEFORE making any changes
     # Prompt 1: Confirm worktree deletion (default yes)
-    if not $yes {
-        let confirm_delete = (gum confirm $"Are you sure you want to delete ($worktree_path)?" --default)
-        if not $confirm_delete {
-            return "Worktree deletion cancelled"
-        }
+    let confirm_delete = if $yes {
+        true
+    } else {
+        (gum confirm $"Are you sure you want to delete ($worktree_path)?" --default)
     }
 
-    # Remove the worktree
-    let remove_msg = handle-worktree-removal $worktree_path $workdir $force
-
-    # If no branch found, just return the removal message
-    if $branch_name == null {
-        return $remove_msg
+    if not $confirm_delete {
+        return "Worktree deletion cancelled"
     }
 
-    # Prompt 2: Confirm branch deletion (default no)
-    # With --yes flag, automatically delete the branch
-    let confirm_branch = if $yes {
+    # Prompt 2: Confirm branch deletion (default no) - only if branch exists
+    let confirm_branch = if $branch_name == null {
+        false
+    } else if $yes {
         true
     } else {
         (gum confirm $"Do you want to delete the branch '($branch_name)'?" --affirmative "Yes" --negative "No")
     }
 
-    if not $confirm_branch {
-        return $remove_msg
-    }
+    # EXECUTION PHASE: Now perform all the actual deletions
+    # Remove the worktree
+    let remove_msg = handle-worktree-removal $worktree_path $workdir $force
 
-    # Delete the branch (we already fetched remote_branch info earlier)
-    let branch_msg = if $remote_branch != null {
-        # Delete both local and remote
-        handle-branch-deletion-both $workdir $force $branch_name $remote_branch
+    # Delete the branch if confirmed
+    let branch_msg = if $confirm_branch and $branch_name != null {
+        if $remote_branch != null {
+            # Delete both local and remote
+            handle-branch-deletion-both $workdir $force $branch_name $remote_branch
+        } else {
+            # Delete local only
+            handle-branch-deletion-direct $workdir $force $branch_name
+        }
     } else {
-        # Delete local only
-        handle-branch-deletion-direct $workdir $force $branch_name
+        null
     }
 
     # Combine messages

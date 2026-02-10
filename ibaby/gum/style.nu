@@ -39,14 +39,14 @@ export def "gum style" [
     if $underline { $args = ($args | append "--underline") }
     if $trim { $args = ($args | append "--trim") }
 
-    let result = if ($input | is-not-empty) {
-        $input | ^$gum style ...$args | complete
-    } else {
-        ^$gum style ...$args ...$text | complete
+    let output = try {
+        if ($input | is-not-empty) {
+            $input | ^gum style ...$args
+        } else {
+            ^gum style ...$args ...$text
+        }
+    } catch {
+        error make --unspanned { msg: $"gum style failed with exit code ($env.LAST_EXIT_CODE)" }
     }
-
-    if $result.exit_code != 0 {
-        error make --unspanned { msg: $"gum style failed \(exit ($result.exit_code)): ($result.stderr | str trim)" }
-    }
-    $result.stdout | str trim --right --char "\n"
+    $output | str trim --right --char "\n"
 }

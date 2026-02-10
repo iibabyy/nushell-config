@@ -43,17 +43,17 @@ export def "gum filter" [
 
     let multi = $no_limit or ($limit != null and $limit > 1)
 
-    let result = if ($input | is-not-empty) {
-        $input | str join "\n" | ^$gum filter ...$args | complete
-    } else {
-        ^$gum filter ...$args ...$options | complete
+    let output = try {
+        if ($input | is-not-empty) {
+            $input | str join "\n" | ^gum filter ...$args
+        } else {
+            ^gum filter ...$args ...$options
+        }
+    } catch {
+        error make --unspanned { msg: $"gum filter failed with exit code ($env.LAST_EXIT_CODE)" }
     }
 
-    if $result.exit_code != 0 {
-        error make --unspanned { msg: $"gum filter failed \(exit ($result.exit_code)): ($result.stderr | str trim)" }
-    }
-
-    let output = $result.stdout | str trim --right --char "\n"
+    let output = $output | str trim --right --char "\n"
     if $multi {
         $output | lines
     } else {

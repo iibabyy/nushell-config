@@ -51,3 +51,15 @@ export def to-go-duration []: duration -> string {
 
     $parts | str join ""
 }
+
+# Check if an exit code indicates the process was interrupted by a signal
+# Returns true for signal-based exits (Ctrl+C, SIGTERM, etc.)
+export def is-interrupted [
+    exit_code: int
+]: nothing -> bool {
+    # Exit codes for common signals:
+    # 130 = SIGINT (Ctrl+C) = 128 + 2
+    # 143 = SIGTERM = 128 + 15
+    # Generally, exit codes 128-192 indicate signal termination
+    $exit_code >= 128 and $exit_code < 192
+}

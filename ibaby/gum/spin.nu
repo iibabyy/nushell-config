@@ -22,9 +22,10 @@ export def "gum spin" [
     if $align != null { $args = ($args | append [--align $align]) }
     if $timeout != null { $args = ($args | append [--timeout ($timeout | to-go-duration)]) }
 
-    let result = ^$gum spin ...$args -- ...$command | complete
-    if $result.exit_code != 0 {
-        error make --unspanned { msg: $"gum spin failed \(exit ($result.exit_code)): ($result.stderr | str trim)" }
+    let output = try {
+        ^gum spin ...$args -- ...$command
+    } catch {
+        error make --unspanned { msg: $"gum spin failed with exit code ($env.LAST_EXIT_CODE)" }
     }
-    $result.stdout | str trim --right --char "\n"
+    $output | str trim --right --char "\n"
 }

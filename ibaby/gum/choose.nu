@@ -29,17 +29,17 @@ export def "gum choose" [
 
     let multi = $no_limit or ($limit != null and $limit > 1)
 
-    let result = if ($input | is-not-empty) {
-        $input | str join "\n" | ^$gum choose ...$args | complete
-    } else {
-        ^$gum choose ...$args ...$options | complete
+    let output = try {
+        if ($input | is-not-empty) {
+            $input | str join "\n" | ^gum choose ...$args
+        } else {
+            ^gum choose ...$args ...$options
+        }
+    } catch {
+        error make --unspanned { msg: $"gum choose failed with exit code ($env.LAST_EXIT_CODE)" }
     }
 
-    if $result.exit_code != 0 {
-        error make --unspanned { msg: $"gum choose failed \(exit ($result.exit_code)): ($result.stderr | str trim)" }
-    }
-
-    let output = $result.stdout | str trim --right --char "\n"
+    let output = $output | str trim --right --char "\n"
     if $multi {
         $output | lines
     } else {
