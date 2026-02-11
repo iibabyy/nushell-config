@@ -51,7 +51,7 @@ export def create_left_prompt [] {
         ""
     }
 
-    $"(ansi reset)($path_color)($dir)($git_display)\n(ansi cyan)❯ "
+    $"(ansi reset)($path_color)($dir)($git_display)\n(ansi cyan) (ansi reset)"
 }
 
 export-env {
