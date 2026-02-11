@@ -1,6 +1,8 @@
 [submodule "nu_plugin_clipboard"]
 	path = nu_plugin_clipboard
 	url = https://github.com/fmotalleb/nu_plugin_clipboard.git
+
 [submodule "nupm"]
 	path = nupm
 	url = https://github.com/nushell/nupm.git
+	ignore = dirty
