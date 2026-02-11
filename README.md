@@ -27,6 +27,7 @@ nu -c 'git clone https://github.com/iibabyy/nushell.git $nu.default-config-dir -
 > let config_path = $nu.default-config-dir
 > let backup_path = ($config_path | path dirname | path join nushell.backup)
 >
+> # Save the previous nushell directory and clone the new one
 > mv $config_path $backup_path
 > git clone https://github.com/iibabyy/nushell.git $config_path --recursive
 >
