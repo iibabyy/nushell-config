@@ -5,6 +5,6 @@ source ~/.config/nushell/zoxide.nu
 
 # Nupm Package Manager
 # ---------------------
-overlay use ~/.local/share/nushell/overlay/nupm/nupm/ --prefix
+overlay use nupm/nupm --prefix
 
 use ~/.config/nushell/ibaby/ *
