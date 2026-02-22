@@ -1,5 +1,5 @@
 # Default editor (change this to your preferred editor, e.g. "nano", "code", "emacs")
-$env.config.buffer_editor = "vim"
+$env.config.buffer_editor = "nvim"
 $env.config.show_banner = false
 
 # Environment variables
@@ -43,7 +43,7 @@ do --env {
   if ($cargo_home | path exists) {
     add ($cargo_home | path join "bin")
     # Shared target directory across all Cargo projects (saves disk, etc...)
-    # $env.CARGO_TARGET_DIR = $cargo_home | path join "target"
+    $env.CARGO_TARGET_DIR = $cargo_home | path join "target"
   }
 
 }
