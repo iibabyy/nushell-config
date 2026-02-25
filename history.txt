@@ -1,0 +1,117 @@
+zsh
+c
+gst
+g log
+cat .gitmodules 
+ga .
+gc "save"
+gst
+cat .gitmodules 
+gst
+c
+g log
+ga .
+gc save
+gst
+gp
+c
+/tmp
+https://github.com/iibabyy/config
+gcl https://github.com/iibabyy/config
+git prune
+cfg
+git prune
+gst
+git gc --aggressive
+/tmp
+c
+gcl https://github.com/iibabyy/config
+git clone --depth 1 --recurse-submodules https://github.com/iibabyy/config
+cd config/
+c
+;s
+c
+ls
+c
+l
+sc
+c
+ls
+tree
+c
+ls */*
+c
+ls **
+z .worktrees/admin-handler-counts/
+c
+...
+c
+l
+sc
+c
+gst
+ga .
+g restore --staged .
+c
+gst
+z .worktrees/admin-handler-counts/
+c
+gst
+c
+gh pr create
+gh pr merge
+...
+g pull
+gp
+c
+gst
+ga supabase/migrations/20260225105033_migrate_legacy_closing_items_to_go_no_go.sql 
+gc "added a migration"
+supabase db push
+gc "added a migration"
+c
+gh pr create --base prod
+gh pr merge
+c
+bun dev
+/tmp
+git clone https://github.com/iibabyy/config.git
+rm -rf config/
+git clone https://github.com/iibabyy/config.git
+git clone https://github.com/iibabyy/config.git --depth 1
+supabase db push
+z ir
+supabase db push
+supabase migration repair --status reverted 20260225135332
+supabase db push
+supabase db push --db-url "postgresql://postgres.nvthpeqsivrfovcxmufn:r2QGIU4P8X9qkhbX@aws-1-eu-west-3.pooler.supabase.com:5432/postgres"
+c
+z tmp
+z c
+pwd
+z /tmp/config/
+ls
+c
+..
+rm -rf config/
+gcl https://github.com/iibabyy/config
+cd config/
+c
+..
+rm -rf config/
+c
+z ir
+c
+cfg
+gst
+g log
+c
+cc
+c
+gst
+c
+z nushell/
+c
+ls
+nano .gitignore 
+gst
