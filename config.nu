@@ -64,3 +64,10 @@ overlay use nupm/nupm --prefix
 
 use custom *
 
+# argc-completions
+$env.ARGC_COMPLETIONS_ROOT = '/home/ibaby/.config/argc-completions'
+$env.ARGC_COMPLETIONS_PATH = ($env.ARGC_COMPLETIONS_ROOT + '/completions/linux:' + $env.ARGC_COMPLETIONS_ROOT + '/completions')
+$env.PATH = ($env.PATH | prepend ($env.ARGC_COMPLETIONS_ROOT + '/bin'))
+argc --argc-completions nushell | save -f '/home/ibaby/.config/argc-completions/tmp/argc-completions.nu'
+source '/home/ibaby/.config/argc-completions/tmp/argc-completions.nu'
+
