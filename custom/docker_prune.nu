@@ -3,9 +3,9 @@
 # This is a destructive operation that deletes ALL Docker resources.
 # Returns a summary of what was deleted with statistics and any errors.
 # Use --force to skip the confirmation prompt for automated scripts.
-@example "Clean all Docker resources with confirmation" {deldocker}
-@example "Clean without confirmation" {deldocker --force}
-export def deldocker [
+@example "Clean all Docker resources with confirmation" {dockerprune}
+@example "Clean without confirmation" {dockerprune --force}
+export def dockerprune [
   --force(-f)        # Skip confirmation prompt
 ]: nothing -> nothing {
     # Check Docker is available
