@@ -7,5 +7,7 @@ export use docker.nu *
 
 export-env {
     use prompt.nu
-    use hooks.nu
+
+    # uncomment for background git fetch
+    # use hooks.nu
 }
