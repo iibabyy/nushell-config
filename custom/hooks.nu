@@ -1,7 +1,7 @@
 export-env {
     let bg_fetch = {|| job spawn {
         if (git rev-parse --is-inside-work-tree | complete).exit_code == 0 {
-            git fetch --quiet | ignore
+            git fetch --all --no-write-fetch-head --quiet | complete | ignore
         }
     } }
 
