@@ -18,10 +18,3 @@ export alias cb = cargo build
 export alias cmod = cargo modules structure
 export alias ct = cargo nextest run
 export alias cw = cargo watch '-q' '-c' '-x'
-
-# Antigravity Aliases
-export alias anti = antigravity
-
-# xclip
-export alias clip = xclip -selection clipboard
-export alias paste = clipboard paste

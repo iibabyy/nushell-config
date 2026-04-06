@@ -400,8 +400,18 @@ export def copy-to-clipboard [
     path: path
 ]: nothing -> string {
     try {
-        $path | clip | ignore
-        $"Path copied to clipboard ($path)"
+        let cmd = if $nu.os-info.name == "macos" {
+            {|path: string|  $path | pbcopy }
+        } else if $nu.os-info.name == "linux" {
+            {|path: string|  $path |  xclip -selection clipboard}
+        } else {
+            return
+        }
+
+        let exit_code = $path | do $cmd | complete | get exit_code
+        if $exit_code == 0 {
+            $"Path copied to clipboard ($path)"
+        }
     }
 }
 
