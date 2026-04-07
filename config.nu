@@ -8,13 +8,17 @@
 do --env {
     use std/util "path add"
 
+    # Helper to add paths to the PATH env var
+    # (checks that the path exists before adding it)
     def add --env [paths] {
         let type = ($paths | describe)
+
         let paths: list<string> = if $type == "string" {
             [$paths]
         } else if $type == "list<string>" {
             $paths
         }
+
         for path in $paths {
             if ($path | path exists) {
                 path add $path
@@ -24,8 +28,11 @@ do --env {
 
     # Homebrew (macOS)
     if $nu.os-info.name == "macos" {
-        if ("/opt/homebrew/bin" | path exists) { add ["/opt/homebrew/bin", "/opt/homebrew/sbin"] }
-        if ("/usr/local/bin" | path exists) { add "/usr/local/bin" }
+        add [
+            "/opt/homebrew/bin",
+            "/opt/homebrew/sbin",
+            "/usr/local/bin"
+        ]
     }
 
     add ($env.HOME + ".local/bin")
@@ -33,6 +40,7 @@ do --env {
     let cargo_home = ($env.CARGO_HOME? | default ($env.HOME + "/.cargo"))
     add ($cargo_home + "/bin")
 }
+
 # Zoxide
 # ---------------------
 # const zoxide_path = ($nu.cache-dir + "zoxide.nu")
