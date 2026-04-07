@@ -1,8 +1,8 @@
 # Default editor (change this to your preferred editor, e.g. "nano", "code", "emacs")
-# $env.config.buffer_editor = "vim"
+$env.config.buffer_editor = "anti"
 
 # Deactivate the banner when Nushell start
-# $env.config.show_banner = false
+$env.config.show_banner = false
 
 # Environment variables
 do --env {
@@ -43,16 +43,16 @@ do --env {
 
 # Zoxide
 # ---------------------
-# const zoxide_path = ($nu.cache-dir + "zoxide.nu")
-# source $zoxide_path
+const zoxide_path = ($nu.cache-dir + "zoxide.nu")
+source $zoxide_path
 
 # Carapace
 # ---------------------
-# const carapace_path = ($nu.cache-dir + "carapace.nu")
-# source $carapace_path
+const carapace_path = ($nu.cache-dir + "carapace.nu")
+source $carapace_path
 
 # Nupm Package Manager (Nushell plugin)
 # ---------------------
-# overlay use nupm/nupm --prefix
+overlay use nupm/nupm --prefix
 
 use custom *
