@@ -3,7 +3,6 @@ use utils.nu cp-gitignored
 use worktree-utils.nu *
 use span-utils.nu [make-spanned make-spanned-default make-error]
 use ../gum "gum confirm"
-
 # Create or remove a git worktree
 #
 # Creates a new git worktree on a fresh branch, copies gitignored files
@@ -39,29 +38,23 @@ export def gtree [
     let spanned_path = if $path != null { make-spanned $path (metadata $path) } else { null }
     let spanned_base = if $base_branch != null { make-spanned $base_branch (metadata $base_branch) } else { null }
     let spanned_workdir = (make-spanned-default $workdir $env.PWD (metadata $workdir))
-
     # Handle remove mode
     if $rm {
         validate-remove-mode-flags $spanned_path $spanned_base
-
         # Validate git repo first
         validate-git-repo $spanned_workdir
-
         # Unwrap for pure computation (can't fail)
         let workdir = ($spanned_workdir.value | path expand)
-
         # Find worktree by branch name from git worktree list
         let resolved_path = (get-worktree-path-by-branch $spanned_branch.value $workdir)
-
         if $resolved_path == null {
             make-error $"No worktree found for branch '($spanned_branch.value)'" $spanned_branch --label "worktree not found" --hint "Use 'git worktree list' to see all worktrees"
         }
-
         # Call gtree-remove with spanned values
         match [$force, $yes] {
-            [true, true] => { gtree-remove $resolved_path $spanned_branch $spanned_workdir --force --yes },
-            [true, false] => { gtree-remove $resolved_path $spanned_branch $spanned_workdir --force },
-            [false, true] => { gtree-remove $resolved_path $spanned_branch $spanned_workdir --yes },
+            [true, true] => { gtree-remove $resolved_path $spanned_branch $spanned_workdir --force --yes }
+            [true, false] => { gtree-remove $resolved_path $spanned_branch $spanned_workdir --force }
+            [false, true] => { gtree-remove $resolved_path $spanned_branch $spanned_workdir --yes }
             [false, false] => { gtree-remove $resolved_path $spanned_branch $spanned_workdir }
         }
     } else {

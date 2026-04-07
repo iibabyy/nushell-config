@@ -1,7 +1,6 @@
 use util.nu [gum-path]
 
 export def "gum log" [
-    ...text: string
     --file(-o): string
     --format(-f): string
     --formatter: string
@@ -10,6 +9,7 @@ export def "gum log" [
     --structured(-s)
     --time(-t): string
     --min-level: string
+    ...text: string
 ]: nothing -> nothing {
     let gum = (gum-path)
     mut args: list<string> = []
@@ -21,10 +21,11 @@ export def "gum log" [
     if $structured { $args = ($args | append "--structured") }
     if $time != null { $args = ($args | append [--time $time]) }
     if $min_level != null { $args = ($args | append [--min-level $min_level]) }
-
     try {
         ^gum log ...$args ...$text
     } catch {
-        error make --unspanned { msg: $"gum log failed with exit code ($env.LAST_EXIT_CODE)" }
+        error make --unspanned {
+            msg: $"gum log failed with exit code ($env.LAST_EXIT_CODE)"
+        }
     }
 }

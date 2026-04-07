@@ -1,7 +1,6 @@
 use util.nu [to-go-duration, gum-path]
 
 export def "gum spin" [
-    ...command: string
     --title: string
     --spinner(-s): string
     --show-output
@@ -10,6 +9,7 @@ export def "gum spin" [
     --show-stderr
     --align(-a): string
     --timeout: duration
+    ...command: string
 ]: nothing -> string {
     let gum = (gum-path)
     mut args: list<string> = []
@@ -20,12 +20,18 @@ export def "gum spin" [
     if $show_stdout { $args = ($args | append "--show-stdout") }
     if $show_stderr { $args = ($args | append "--show-stderr") }
     if $align != null { $args = ($args | append [--align $align]) }
-    if $timeout != null { $args = ($args | append [--timeout ($timeout | to-go-duration)]) }
-
+    if $timeout != null {
+        $args = ($args | append [
+        --timeout
+        ($timeout | to-go-duration)
+    ])
+    }
     let output = try {
         ^gum spin ...$args -- ...$command
     } catch {
-        error make --unspanned { msg: $"gum spin failed with exit code ($env.LAST_EXIT_CODE)" }
+        error make --unspanned {
+            msg: $"gum spin failed with exit code ($env.LAST_EXIT_CODE)"
+        }
     }
     $output | str trim --right --char "\n"
 }

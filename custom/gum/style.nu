@@ -1,7 +1,6 @@
 use util.nu [gum-path]
 
 export def "gum style" [
-    ...text: string
     --foreground: string
     --background: string
     --border: string
@@ -18,7 +17,8 @@ export def "gum style" [
     --strikethrough
     --underline
     --trim
-]: [string -> string, nothing -> string] {
+    ...text: string
+]: string -> string, nothing -> string {
     let input = $in
     let gum = (gum-path)
     mut args: list<string> = []
@@ -28,8 +28,18 @@ export def "gum style" [
     if $border_foreground != null { $args = ($args | append [--border-foreground $border_foreground]) }
     if $border_background != null { $args = ($args | append [--border-background $border_background]) }
     if $align != null { $args = ($args | append [--align $align]) }
-    if $height != null { $args = ($args | append [--height ($height | into string)]) }
-    if $width != null { $args = ($args | append [--width ($width | into string)]) }
+    if $height != null {
+        $args = ($args | append [
+        --height
+        ($height | into string)
+    ])
+    }
+    if $width != null {
+        $args = ($args | append [
+        --width
+        ($width | into string)
+    ])
+    }
     if $margin != null { $args = ($args | append [--margin $margin]) }
     if $padding != null { $args = ($args | append [--padding $padding]) }
     if $bold { $args = ($args | append "--bold") }
@@ -38,7 +48,6 @@ export def "gum style" [
     if $strikethrough { $args = ($args | append "--strikethrough") }
     if $underline { $args = ($args | append "--underline") }
     if $trim { $args = ($args | append "--trim") }
-
     let output = try {
         if ($input | is-not-empty) {
             $input | ^gum style ...$args
@@ -46,7 +55,9 @@ export def "gum style" [
             ^gum style ...$args ...$text
         }
     } catch {
-        error make --unspanned { msg: $"gum style failed with exit code ($env.LAST_EXIT_CODE)" }
+        error make --unspanned {
+            msg: $"gum style failed with exit code ($env.LAST_EXIT_CODE)"
+        }
     }
     $output | str trim --right --char "\n"
 }

@@ -23,14 +23,25 @@ export def "gum file" [
     if $directory { $args = ($args | append "--directory") }
     if $show_help { $args = ($args | append "--show-help") }
     if $header != null { $args = ($args | append [--header $header]) }
-    if $height != null { $args = ($args | append [--height ($height | into string)]) }
-    if $timeout != null { $args = ($args | append [--timeout ($timeout | to-go-duration)]) }
+    if $height != null {
+        $args = ($args | append [
+        --height
+        ($height | into string)
+    ])
+    }
+    if $timeout != null {
+        $args = ($args | append [
+        --timeout
+        ($timeout | to-go-duration)
+    ])
+    }
     if $path != null { $args = ($args | append $path) }
-
     let output = try {
         ^gum file ...$args
     } catch {
-        error make --unspanned { msg: $"gum file failed with exit code ($env.LAST_EXIT_CODE)" }
+        error make --unspanned {
+            msg: $"gum file failed with exit code ($env.LAST_EXIT_CODE)"
+        }
     }
     $output | str trim --right --char "\n"
 }

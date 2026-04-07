@@ -1,19 +1,30 @@
-export def make_error_with_span [msg: string, span?: any, label?: string, --hint: string] {
+export def make_error_with_span [
+    msg: string
+    span?
+    label?: string
+    --hint: string
+] {
     if $span != null {
         if $hint != null {
-            error make { msg: $msg, label: { text: $label, span: $span }, help: $hint }
+            error make {
+                msg: $msg
+                label: {text: $label, span: $span}
+                help: $hint
+            }
         } else {
-            error make { msg: $msg, label: { text: $label, span: $span } }
+            error make {
+                msg: $msg
+                label: {text: $label, span: $span}
+            }
         }
     } else {
         if $hint != null {
-            error make --unspanned { msg: $msg, help: $hint }
+            error make --unspanned {msg: $msg, help: $hint}
         } else {
-            error make --unspanned { msg: $msg }
+            error make --unspanned {msg: $msg}
         }
     }
 }
-
 # Copy files listed in .gitignore from base to target directory
 #
 # Parses the .gitignore file in the base directory and copies all matching
@@ -37,27 +48,34 @@ export def cp-gitignored [
 ]: nothing -> string {
     let abs_base = ($base | path expand)
     let abs_target = ($target | path expand)
-
     # Validate base directory
     if not ($abs_base | path exists) {
         error make {
             msg: $"Base directory does not exist: ($abs_base)"
-            label: { text: "Not found", span: (metadata $base).span }
+            label: {
+                text: "Not found"
+                span: (metadata $base).span
+            }
         }
     }
     if ($abs_base | path type) != "dir" {
         error make {
             msg: $"Base path is not a directory: ($abs_base)"
-            label: { text: "not a directory", span: (metadata $base).span }
+            label: {
+                text: "not a directory"
+                span: (metadata $base).span
+            }
         }
     }
-
     # Validate or create target directory
     if ($abs_target | path exists) {
         if ($abs_target | path type) != "dir" {
             error make {
                 msg: $"Target path exists but is not a directory: ($abs_target)"
-                label: { text: "not a directory", span: (metadata $target).span }
+                label: {
+                    text: "not a directory"
+                    span: (metadata $target).span
+                }
             }
         }
     } else {
@@ -66,21 +84,21 @@ export def cp-gitignored [
         } catch {
             error make {
                 msg: $"Failed to create target directory: ($abs_target)"
-                label: { text: "cannot create directory", span: (metadata $target).span }
+                label: {
+                    text: "cannot create directory"
+                    span: (metadata $target).span
+                }
             }
         }
     }
-
     let gitignore = ($abs_base | path join ".gitignore")
-
-    let skipped_files = [
-        ".git",
-        "node_modules"
-    ]
-
+    let skipped_files = [".git", "node_modules"]
     # Process .gitignore patterns
     let result = if ($gitignore | path exists) {
-        (try { open $gitignore } catch { |err| print -e $"Warning: could not read ($gitignore): ($err.msg)"; "" })
+        (try { open $gitignore } catch {|err|
+            print -e $"Warning: could not read ($gitignore): ($err.msg)"
+            ""
+        })
         | lines
         | each {|line| $line | str trim }
         | where { |line|
@@ -133,11 +151,15 @@ export def cp-gitignored [
     } else {
         []
     }
-
     # Separate and sort messages
-    let success = ($result | each { |r| $r.success } | flatten | sort)
-    let errors = ($result | each { |r| $r.errors } | flatten | sort)
-
-    let messages = if $quiet { $errors } else { $success | append $errors }
+    let success = (
+        $result | each { |r| $r.success } | flatten | sort
+    )
+    let errors = (
+        $result | each { |r| $r.errors } | flatten | sort
+    )
+    let messages = if $quiet { $errors } else {
+        $success | append $errors
+    }
     $messages | str join '\n'
 }

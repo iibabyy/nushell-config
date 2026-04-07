@@ -4,27 +4,24 @@
 
 # Create a spanned value from a user-provided parameter
 # Takes explicit metadata to preserve span from the original call site
-export def make-spanned [
-    value: any
-    meta: record
-]: nothing -> record<value: any, span: any> {
-    { value: $value, span: ($meta | get span) }
-}
-
-# Create a spanned value for an optional parameter with a default
-# If the value is null, uses the default with a null span
-export def make-spanned-default [
-    value: any
-    default: any
-    meta?: record
-]: nothing -> record<value: any, span: any> {
-    if $value != null {
-        { value: $value, span: ($meta | get span) }
-    } else {
-        { value: $default, span: null }
+export def make-spanned [value, meta: record]: nothing -> record<value: any, span: any> {
+    {
+        value: $value
+        span: ($meta | get span)
     }
 }
-
+# Create a spanned value for an optional parameter with a default
+# If the value is null, uses the default with a null span
+export def make-spanned-default [value, default, meta?: record]: nothing -> record<value: any, span: any> {
+    if $value != null {
+        {
+            value: $value
+            span: ($meta | get span)
+        }
+    } else {
+        {value: $default, span: null}
+    }
+}
 # Create an error with optional span support
 # Automatically uses --unspanned when span is null
 #
@@ -34,25 +31,27 @@ export def make-spanned-default [
 export def make-error [
     msg: string
     spanned_value?: record<value: any, span: any>
-    --label: string = "error"
+    --label: string = error
     --hint: string
 ]: nothing -> nothing {
     let span = if $spanned_value != null { $spanned_value.span } else { null }
-
     if $span != null {
         let err = {
-            msg: $msg,
-            label: { text: $label, span: $span }
+            msg: $msg
+            label: {text: $label, span: $span}
         }
-        let full = if $hint != null { $err | insert help $hint } else { $err }
+        let full = if $hint != null {
+            $err | insert help $hint
+        } else { $err }
         error make $full
     } else {
-        let err = { msg: $msg }
-        let full = if $hint != null { $err | insert help $hint } else { $err }
+        let err = {msg: $msg}
+        let full = if $hint != null {
+            $err | insert help $hint
+        } else { $err }
         error make --unspanned $full
     }
 }
-
 # Create error from an error object (same structure as error make)
 # Automatically uses --unspanned if label.span is missing or null
 #
@@ -62,14 +61,11 @@ export def make-error [
 #       label: { text: "path already exists", span: $spanned_path.span }
 #       help: "Use --path to specify a different location"
 #   }
-export def make-error-with-span [
-    error_object: any
-]: nothing -> nothing {
+export def make-error-with-span [error_object]: nothing -> nothing {
     let has_span = (
         ($error_object.label? != null) and
         ($error_object.label.span? != null)
     )
-
     if $has_span {
         error make $error_object
     } else {
