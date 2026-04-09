@@ -27,15 +27,13 @@ do --env {
     }
 
     # Homebrew (macOS)
-    if $nu.os-info.name == "macos" {
-        add [
-            "/opt/homebrew/bin",
-            "/opt/homebrew/sbin",
-            "/usr/local/bin"
-        ]
-    }
+    add [
+        "/opt/homebrew/bin",
+        "/opt/homebrew/sbin",
+    ]
 
-    add ($env.HOME + ".local/bin")
+    add "/usr/local/bin"
+    add ($env.HOME + "/.local/bin")
 
     let cargo_home = ($env.CARGO_HOME? | default ($env.HOME + "/.cargo"))
     add ($cargo_home + "/bin")
