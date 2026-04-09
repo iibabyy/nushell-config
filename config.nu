@@ -33,6 +33,7 @@ do --env {
     ]
 
     add "/Users/ibaby/.bun/bin"
+    add "/opt/homebrew/opt/python@3.14/libexec/bin"
 
     add "/usr/local/bin"
     add ($env.HOME + "/.local/bin")
