@@ -35,7 +35,8 @@ do --env {
         ]
     }
 
-    add ($env.HOME + ".local/bin")
+    add "/usr/local/bin"
+    add ($env.HOME + "/.local/bin")
 
     let cargo_home = ($env.CARGO_HOME? | default ($env.HOME + "/.cargo"))
     add ($cargo_home + "/bin")
