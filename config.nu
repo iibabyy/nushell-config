@@ -32,6 +32,8 @@ do --env {
         "/opt/homebrew/sbin",
     ]
 
+    add "/Users/ibaby/.bun/bin"
+
     add "/usr/local/bin"
     add ($env.HOME + "/.local/bin")
 
