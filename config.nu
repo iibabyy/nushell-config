@@ -1,5 +1,5 @@
 # Default editor (change this to your preferred editor, e.g. "nano", "code", "emacs")
-$env.config.buffer_editor = "anti"
+$env.config.buffer_editor = "agy"
 
 # Deactivate the banner when Nushell start
 $env.config.show_banner = false

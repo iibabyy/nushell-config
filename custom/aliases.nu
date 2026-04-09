@@ -4,6 +4,7 @@ export alias res = exec nu
 export alias vi = nvim
 export alias l = ls
 export alias gg = lazygit
+export alias claude = claude --allow-dangerously-skip-permissions
 
 # Git Aliases
 export alias g = git
