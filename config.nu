@@ -27,13 +27,10 @@ do --env {
     }
 
     # Homebrew (macOS)
-    if $nu.os-info.name == "macos" {
-        add [
-            "/opt/homebrew/bin",
-            "/opt/homebrew/sbin",
-            "/usr/local/bin"
-        ]
-    }
+    add [
+        "/opt/homebrew/bin",
+        "/opt/homebrew/sbin",
+    ]
 
     add "/usr/local/bin"
     add ($env.HOME + "/.local/bin")
