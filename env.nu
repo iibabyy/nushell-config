@@ -12,3 +12,8 @@ $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
 carapace _carapace nushell | save --force $carapace_path
 
 $env.CARGO_TARGET_DIR = ($env.HOME + "/.cargo/target")
+
+# Starship
+# ---------------------
+mkdir ($nu.data-dir | path join "vendor/autoload")
+starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
