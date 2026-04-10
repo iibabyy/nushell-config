@@ -1,8 +1,10 @@
-use completers.nu [git_branches gtree_branches]
+use completers.nu [gtree_branches]
+export use completers.nu [git_branches]
 use utils.nu cp-gitignored
 use worktree-utils.nu *
 use span-utils.nu [make-spanned make-spanned-default make-error]
 use ../gum "gum confirm"
+
 # Create or remove a git worktree
 #
 # Creates a new git worktree on a fresh branch, copies gitignored files
