@@ -1,6 +1,6 @@
 export def create_left_prompt [] {
     let dir = ($env.PWD | str replace $env.HOME "~") # Shorten home dir to ~
-    let path_color = (if is-admin { ansi red_bold } else { ansi green_bold })
+    let path_color = (if ($env.USER | is-admin) { ansi red_bold } else { ansi green_bold })
     # Get git branch safely (handles both regular branches and detached HEAD)
     let git_branch = (do { git branch --show-current } | complete)
     let git_ref = if $git_branch.exit_code == 0 {
