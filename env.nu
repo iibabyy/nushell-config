@@ -10,3 +10,5 @@ const zoxide_path = ($nu.cache-dir + "zoxide.nu")
 const carapace_path = ($nu.cache-dir + "carapace.nu")
 $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
 carapace _carapace nushell | save --force $carapace_path
+
+$env.CARGO_TARGET_DIR = ($env.HOME + "/.cargo/target")
