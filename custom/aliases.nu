@@ -4,6 +4,7 @@ export alias res = exec nu
 export alias vi = nvim
 export alias l = ls
 export alias gg = lazygit
+export alias gd = lazydocker
 export alias claude = claude --allow-dangerously-skip-permissions
 export alias anu = agy $nu.default-config-dir
 
