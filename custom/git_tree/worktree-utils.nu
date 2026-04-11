@@ -8,8 +8,8 @@ use span-utils.nu [make-error make-error-with-span]
 export def validate-remove-mode-flags [spanned_path?: record<value: path, span: any>, spanned_base?: record<value: string, span: any>]: nothing -> nothing {
     if $spanned_path != null {
         error make {
-            msg: "Cannot use --path with --rm"
-            label: {text: "incompatible with --rm", span: $spanned_path.span}
+            msg: "Cannot use --path with --rm", 
+            label: { text: "incompatible with --rm", span: $spanned_path.span}
             help: "The --path flag is only for creating worktrees. To remove a worktree, use: gtree <branch-name> --rm"
         }
     }
@@ -25,9 +25,9 @@ export def validate-remove-mode-flags [spanned_path?: record<value: path, span: 
 export def validate-create-mode-flags [force?: bool, yes?: bool]: nothing -> nothing {
     if $force {
         error make {
-            msg: "The --force flag requires --rm"
+            msg: "The --force flag requires --rm", 
             label: {
-                text: "requires --rm"
+                text: "requires --rm", 
                 span: (metadata $force).span
             }
             help: "Use: gtree --rm <branch-name> --force"
@@ -35,9 +35,9 @@ export def validate-create-mode-flags [force?: bool, yes?: bool]: nothing -> not
     }
     if $yes {
         error make {
-            msg: "The --yes flag requires --rm"
+            msg: "The --yes flag requires --rm", 
             label: {
-                text: "requires --rm"
+                text: "requires --rm", 
                 span: (metadata $yes).span
             }
             help: "Use: gtree --rm <branch-name> --yes"
