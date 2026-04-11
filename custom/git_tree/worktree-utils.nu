@@ -2,7 +2,6 @@
 # These are internal helpers following Single Responsibility Principle
 use completers.nu [git_branches gtree_branches]
 use utils.nu cp-gitignored
-use ../gum "gum confirm"
 use span-utils.nu [make-error make-error-with-span]
 # Validate flags that are incompatible with remove mode
 export def validate-remove-mode-flags [spanned_path?: record<value: path, span: any>, spanned_base?: record<value: string, span: any>]: nothing -> nothing {
