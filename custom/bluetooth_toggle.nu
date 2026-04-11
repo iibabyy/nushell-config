@@ -9,9 +9,9 @@
 @example "toggle between two devices" {toggle_airpods_and_spotify "Airpods Pro" "MacBook Pro" "iPhone"}
 @example "list available devices" {toggle_airpods_and_spotify --devices}
 export def toggle_airpods_and_spotify [
-	airpod_device?: string@bluetooth_devices # MAC address or bluetooth device name
+	airpod_device?: string@bluetooth_devices # MAC address or bluetooth device name of the airpods
 	current_device_name?: string@spotify_devices # current device name on Spotify
-	other_device_name?: string@spotify_devices # other device name on Spotify
+	other_device_name?: string@spotify_devices # device name to toggle with on Spotify
 	--devices # list available devices
 ]: nothing -> string {
 
@@ -78,8 +78,8 @@ def check_args_are_valid [
 	if $airpod_device == null or $current_device_name == null or $other_device_name == null {
 		error make --unspanned {
 			code: "invalid arguments"
-			msg: "Usages:\n\ttoggle_airpods_and_spotify --devices\n\ttoggle_airpods_and_spotify <airpod_device> <current_device_name> <other_device_name>",
-			help: "run `toggle_airpods_and_spotify --help` for more informations"
+			msg: $"Usages:\n\t(ansi cyan_bold)toggle_airpods_and_spotify(ansi reset) --devices\n\t(ansi cyan_bold)toggle_airpods_and_spotify(ansi reset) <airpod_device> <current_device_name> <other_device_name>",
+			help: $"run `(ansi cyan_bold)toggle_airpods_and_spotify(ansi reset) --help` for more informations"
 		}
 	}
 
@@ -90,7 +90,7 @@ def check_dependencies [] {
 	if (which spotify_player | is-empty) {
 		error make --unspanned {
 			code: "missing dependency"
-			msg: "`spotify_player` not found"
+			msg: $"(ansi cyan_bold)spotify_player(ansi reset) not found"
 			help: "see how to install it at https://github.com/aome510/spotify-player"
 		}
 	}
@@ -98,7 +98,7 @@ def check_dependencies [] {
 	if (which BluetoothConnector | is-empty) {
 		error make --unspanned {
 			code: "missing dependency"
-			msg: "`BluetoothConnector` not found"
+			msg: $"(ansi cyan_bold)BluetoothConnector(ansi reset) not found"
 			help: "see how to install it at https://github.com/lapfelix/BluetoothConnector"
 		}
 	}
@@ -109,19 +109,19 @@ def check_dependencies [] {
 def parse_airpods_device [value: string] {
 	let is_mac_address = ($value =~ '^([0-9a-fA-F]{2}[:-]){5}([0-9a-fA-F]{2})$')
 	if $is_mac_address {
-		return $value | str replace ':' '-'
+		return ($value | str replace ':' '-' --all)
 	}
 
-	let bluetooth_device = bluetooth_devices | where { $in.value == $value }
+	let bluetooth_device = bluetooth_devices | where { $in.description == $value }
 	if ($bluetooth_device | is-empty) {
 		error make --unspanned {
 			code: "invalid bluetooth device"
-			msg: "Airpod device not found"
-			help: "run `toggle_airpods_and_spotify --list` to see available devices"
+			msg: ("device '" + $value + "' not found")
+			help: $"run `(ansi cyan_bold)toggle_airpods_and_spotify(ansi reset) --devices` to see available devices"
 		}
 	}
 
-	$bluetooth_device.value
+	$bluetooth_device.0.value | str replace ':' '-' --all
 }
 
 def bluetooth_devices []: nothing -> list {
@@ -135,7 +135,7 @@ def bluetooth_devices []: nothing -> list {
 			| flatten 
 			| each {{ value: $in.data.Address, description: $in.name }}
 	} else if ($nu.os-info.name == "linux") {
-		bluetoothctl devices Paired
+		bluetoothctl paired-devices
 			| lines
 			| parse "Device {value} {description}"
 	} else {
