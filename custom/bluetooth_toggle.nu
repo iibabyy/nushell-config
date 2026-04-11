@@ -18,6 +18,10 @@ export def toggle_airpods_and_spotify [
 	check_args_are_valid $airpod_device $current_device_name $other_device_name $devices
 	check_dependencies
 
+	if $devices {
+		return (list_devices)
+	}
+
 	# parse $airpod_device into the arg needed by BluetoothConnector
 	let airpod_mac_address = parse_airpods_device $airpod_device
 
@@ -37,6 +41,28 @@ export def toggle_airpods_and_spotify [
 	BluetoothConnector $airpod_mac_address
 
 	return $"Airpods toggled to ($device_to_connect_to)"
+}
+
+def list_devices [] {
+	let make_row = {|value: string, description: string| 
+		"\t" + ($value | fill --alignment left --width 24) + "\t" + ($description | fill --alignment left --width 24)
+	}
+
+	let make_list = {|title: string, col_1: string, col_2: string, devices: list<record>|
+		let col_1 = ((ansi default_bold) + $col_1 + (ansi reset))
+		let col_2 = ((ansi default_bold) + $col_2 + (ansi reset))
+		[
+			((ansi green_bold) + $title + (ansi reset)),
+			(do $make_row $col_1 $col_2),
+			...($devices | each { do $make_row $in.value $in.description })
+		]
+		| str join "\n"
+	}
+
+	let spotify_devices = do $make_list "Spotify Devices" "Name" "Type" (spotify_devices)
+	let bluetooth_devices = do $make_list "Bluetooth Devices" "MAC Address" "Name" (bluetooth_devices)
+
+	[ $spotify_devices, $bluetooth_devices ] | flatten | str join "\n"
 }
 
 def check_args_are_valid [
