@@ -40,9 +40,8 @@ export def toggle_airpods_and_spotify [
 		$current_device_name
 	}
 
-	BluetoothConnector --toggle $airpod_mac_address
-
 	spotify_player connect --name $device_to_connect_to | complete
+	BluetoothConnector --toggle $airpod_mac_address
 
 	# let time for the airpods to connect
 	if $device_to_connect_to == $current_device_name {
@@ -62,7 +61,6 @@ export def toggle_airpods_and_spotify [
 		sleep 5sec
 	}
 
-	spotify_player playback play | complete
 	return $"Airpods toggled to ($device_to_connect_to)"
 }
 
