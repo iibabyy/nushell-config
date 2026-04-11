@@ -1,120 +1,107 @@
-export def --wrapped BluetoothConnector [
-    --toggle
-    ...rest: string       # Captures all other flags and paths
+# Toggle airpods and spotify connections between two devices.
+#
+# use `spotify_player` and `BluetoothConnector` to toggle the airpods connection
+# as well as the device on which spotify is playing between the current device and another.
+#
+# --- Requirements ---
+# 	`spotify_player`: https://github.com/aome510/spotify-player
+# 	`BluetoothConnector`: https://github.com/lapfelix/BluetoothConnector
+@example "toggle between two devices" {toggle_airpods_and_spotify "Airpods Pro" "MacBook Pro" "iPhone"}
+@example "list available devices" {toggle_airpods_and_spotify --devices}
+export def toggle_airpods_and_spotify [
+	airpod_device?: string@bluetooth_devices # MAC address or bluetooth device name
+	current_device_name?: string@spotify_devices # current device name on Spotify
+	other_device_name?: string@spotify_devices # other device name on Spotify
+	--devices # list available devices
+]: nothing -> string {
+
+	check_args_are_valid $airpod_device $current_device_name $other_device_name $devices
+	check_dependencies
+
+	# parse $airpod_device into the arg needed by BluetoothConnector
+	let airpod_mac_address = parse_airpods_device $airpod_device
+
+	let device_to_connect_to = do {
+		let is_currently_connected = (BluetoothConnector --status $airpod_mac_address | str trim) == "Connected"
+		if $is_currently_connected {
+			$other_device_name
+		} else {
+			$current_device_name
+		}
+	}
+
+	# toggle the device to which spotify is connected
+	spotify_player connect --name $device_to_connect_to | complete
+
+	# toggle the bluetooth connection to the airpods
+	BluetoothConnector $airpod_mac_address
+
+	return $"Airpods toggled to ($device_to_connect_to)"
+}
+
+def check_args_are_valid [
+	airpod_device?: string
+	current_device_name?: string
+	other_device_name?: string
+	devices?: bool
 ] {
-	if not $toggle {
-		return (^BluetoothConnector ...$rest)
+	if $devices {
+		return true
 	}
 
-	if (^BluetoothConnector --status ...$rest) == "Connected" {
-		^BluetoothConnector --disconnect ...$rest
-	} else {
-		^BluetoothConnector --connect ...$rest
-	}
-}
-
-# toggle airpods between the current device and another one
-# the other device need to connect automatically to airpods whenever they are not connected to the current device
-#
-# REQUIREMENTS:
-# 	1. spotify_player: cargo install spotify_player --locked
-# 	2. BluetoothConnector: brew install bluetoothconnector
-export def toggle_airpods_and_spotify [
-	airpod_mac_address: string,
-	current_device_name: string # current device name on Spotify
-	other_device_name: string # other device name on Spotify
-]: nothing -> string {
-	if (which spotify_player | is-empty) {
-		return "spotify_player not found"
-	}
-	if (which BluetoothConnector | is-empty) {
-		return "BluetoothConnector not found"
-	}
-
-	let device_to_connect_to = if (BluetoothConnector --status $airpod_mac_address | str trim) == "Connected" {
-		$other_device_name
-	} else {
-		$current_device_name
-	}
-
-	BluetoothConnector --toggle $airpod_mac_address
-
-	spotify_player connect --name $device_to_connect_to | complete
-	if $device_to_connect_to == $current_device_name {
-		mut timeout_counter = 0
-		while (BluetoothConnector --status $airpod_mac_address | str trim) != "Connected" {
-			print --stderr "Waiting for airpods to connect..."
-			sleep 1sec
-			$timeout_counter += 1
-			if $timeout_counter > 10 {
-				return "Airpods not connected"
-			}
+	if $airpod_device == null or $current_device_name == null or $other_device_name == null {
+		error make --unspanned {
+			code: "invalid arguments"
+			msg: "Usages:\n\ttoggle_airpods_and_spotify --devices\n\ttoggle_airpods_and_spotify <airpod_device> <current_device_name> <other_device_name>",
+			help: "run `toggle_airpods_and_spotify --help` for more informations"
 		}
-		sleep 1sec
-	} else {
-		sleep 5sec
 	}
 
-	spotify_player playback play | complete
-	return $"Airpods toggled to ($device_to_connect_to)"
+	true
 }
 
-# Toggle airpods between the current device and another one.
-# For it to work, the other device need to automatically connect to the airpods whenever they are not connected to the current device
-#
-# Notes:
-# 	- when connecting to the other device, we can't know exactly when the airpods are connected, so we wait for 5 seconds.
-#	- connecting to the current device can feel more fluid, since we can know the exact time when airpods are connected
-#
-# Requirements:
-# 	- `spotify_player`: https://github.com/aome510/spotify-player
-# 	- `BluetoothConnector`: https://github.com/lapfelix/BluetoothConnector
-export def toggle_airpods_and_spotify [
-	airpod_mac_address: string@bluetooth_devices,
-	current_device_name: string@spotify_devices # current device name on Spotify
-	other_device_name: string@spotify_devices # other device name on Spotify
-]: nothing -> string {
+def check_dependencies [] {
 	if (which spotify_player | is-empty) {
-		return "spotify_player not found"
-	}
-	if (which BluetoothConnector | is-empty) {
-		return "BluetoothConnector not found"
-	}
-
-	let device_to_connect_to = if (BluetoothConnector --status $airpod_mac_address | str trim) == "Connected" {
-		$other_device_name
-	} else {
-		$current_device_name
-	}
-
-	spotify_player connect --name $device_to_connect_to | complete
-	BluetoothConnector --toggle $airpod_mac_address
-
-	# let time for the airpods to connect
-	if $device_to_connect_to == $current_device_name {
-		# if the airpods needs to connect to the current device,
-		# wait for the exact time where airpods are connected
-		mut timeout_counter = 0
-		while (BluetoothConnector --status $airpod_mac_address | str trim) != "Connected" {
-			sleep 1sec
-			$timeout_counter += 1
-			if $timeout_counter > 10 {
-				return "Timeout: Airpods not connected"
-			}
+		error make --unspanned {
+			code: "missing dependency"
+			msg: "`spotify_player` not found"
+			help: "see how to install it at https://github.com/aome510/spotify-player"
 		}
-
-		sleep 1sec
-	} else {
-		sleep 5sec
 	}
 
-	return $"Airpods toggled to ($device_to_connect_to)"
+	if (which BluetoothConnector | is-empty) {
+		error make --unspanned {
+			code: "missing dependency"
+			msg: "`BluetoothConnector` not found"
+			help: "see how to install it at https://github.com/lapfelix/BluetoothConnector"
+		}
+	}
+}	
+
+# transform a MAC address or a device name
+# into the format needed for `BluetoothConnector` (xx-xx-xx-xx-xx-xx)
+def parse_airpods_device [value: string] {
+	let is_mac_address = ($value =~ '^([0-9a-fA-F]{2}[:-]){5}([0-9a-fA-F]{2})$')
+	if $is_mac_address {
+		return $value | str replace ':' '-'
+	}
+
+	let bluetooth_device = bluetooth_devices | where { $in.value == $value }
+	if ($bluetooth_device | is-empty) {
+		error make --unspanned {
+			code: "invalid bluetooth device"
+			msg: "Airpod device not found"
+			help: "run `toggle_airpods_and_spotify --list` to see available devices"
+		}
+	}
+
+	$bluetooth_device.value
 }
 
-export def bluetooth_devices []: nothing -> list {
+def bluetooth_devices []: nothing -> list {
 
 	# get the known bluetooth devices
-	let completions = if ($nu.os-info.name == "macos") {
+	if ($nu.os-info.name == "macos") {
 		system_profiler SPBluetoothDataType | from yaml | get Bluetooth 
 			| get Connected? "Not Connected"?
 			| where { is-not-empty }
@@ -128,11 +115,9 @@ export def bluetooth_devices []: nothing -> list {
 	} else {
 		[]
 	}
-
-	$completions | update value { str downcase | str replace --all ":" "-" }
 }
 
-export def spotify_devices []: nothing -> list {
+def spotify_devices []: nothing -> list {
 
 	# list<id, is_active, is_private_session, is_restricted, name, type, volume_percent>
 	let devices = (spotify_player get key devices | from json)
