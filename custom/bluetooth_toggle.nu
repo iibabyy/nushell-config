@@ -70,9 +70,9 @@ export def toggle_airpods_and_spotify [
 # 	- `spotify_player`: https://github.com/aome510/spotify-player
 # 	- `BluetoothConnector`: https://github.com/lapfelix/BluetoothConnector
 export def toggle_airpods_and_spotify [
-	airpod_mac_address: string,
-	current_device_name: string # current device name on Spotify
-	other_device_name: string # other device name on Spotify
+	airpod_mac_address: string@bluetooth_devices,
+	current_device_name: string@spotify_devices # current device name on Spotify
+	other_device_name: string@spotify_devices # other device name on Spotify
 ]: nothing -> string {
 	if (which spotify_player | is-empty) {
 		return "spotify_player not found"
@@ -111,4 +111,51 @@ export def toggle_airpods_and_spotify [
 
 	spotify_player playback play | complete
 	return $"Airpods toggled to ($device_to_connect_to)"
+}
+
+export def bluetooth_devices []: nothing -> list {
+
+	# get the known bluetooth devices
+	let completions = if ($nu.os-info.name == "macos") {
+		system_profiler SPBluetoothDataType | from yaml | get Bluetooth 
+			| get Connected? "Not Connected"?
+			| where { is-not-empty }
+			| each { transpose name data }
+			| flatten 
+			| each {{ value: $in.data.Address, description: $in.name }}
+	} else if ($nu.os-info.name == "linux") {
+		bluetoothctl devices Paired
+			| lines
+			| parse "Device {value} {description}"
+	} else {
+		[]
+	}
+
+	$completions | update value { str downcase | str replace --all ":" "-" }
+}
+
+export def spotify_devices []: nothing -> list {
+
+	# list<id, is_active, is_private_session, is_restricted, name, type, volume_percent>
+	let devices = (spotify_player get key devices | from json)
+
+	let get_name = {|device|
+		let needs_quotes = ($device.name =~ '[\s()\[\]{}$|;<>\#*?]')
+
+		if $needs_quotes {
+			$"`($device.name)`"
+		} else {
+			$device.name
+		}
+	}
+
+	let get_description = {|device|
+		let active_msg = if $device.is_active { " (Active)" } else { "" }
+		$device.type + $active_msg
+	}
+
+	$devices | each {{
+		value: (do $get_name $in),
+		description: (do $get_description $in)
+	}}
 }
