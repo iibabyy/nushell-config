@@ -12,12 +12,16 @@ export def --wrapped BluetoothConnector [
     }
 }
 
-# toggle airpods between the current device and another one
-# the other device need to connect automatically to airpods whenever they are not connected to the current device
+# Toggle airpods between the current device and another one.
+# For it to work, the other device need to automatically connect to the airpods whenever they are not connected to the current device
 #
-# REQUIREMENTS:
-# 	1. spotify_player: cargo install spotify_player --locked
-# 	2. BluetoothConnector: brew install bluetoothconnector
+# Notes:
+# 	- when connecting to the other device, we can't know exactly when the airpods are connected, so we wait for 5 seconds.
+#	- connecting to the current device can feel more fluid, since we can know the exact time when airpods are connected
+#
+# Requirements:
+# 	- `spotify_player`: https://github.com/aome510/spotify-player
+# 	- `BluetoothConnector`: https://github.com/lapfelix/BluetoothConnector
 export def toggle_airpods_and_spotify [
 	airpod_mac_address: string,
 	current_device_name: string # current device name on Spotify
@@ -39,16 +43,20 @@ export def toggle_airpods_and_spotify [
 	BluetoothConnector --toggle $airpod_mac_address
 
 	spotify_player connect --name $device_to_connect_to | complete
+
+	# let time for the airpods to connect
 	if $device_to_connect_to == $current_device_name {
+		# if the airpods needs to connect to the current device,
+		# wait for the exact time where airpods are connected
 		mut timeout_counter = 0
 		while (BluetoothConnector --status $airpod_mac_address | str trim) != "Connected" {
-			print --stderr "Waiting for airpods to connect..."
 			sleep 1sec
 			$timeout_counter += 1
 			if $timeout_counter > 10 {
-				return "Airpods not connected"
+				return "Timeout: Airpods not connected"
 			}
 		}
+
 		sleep 1sec
 	} else {
 		sleep 5sec
