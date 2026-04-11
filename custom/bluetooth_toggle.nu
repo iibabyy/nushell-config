@@ -3,6 +3,9 @@
 # use `spotify_player` and `BluetoothConnector` to toggle the airpods connection
 # as well as the device on which spotify is playing between the current device and another.
 #
+# --- Note ---
+# 	use <tab> while typing the arguments for autocompletions with available devices.
+#
 # --- Requirements ---
 # 	`spotify_player`: https://github.com/aome510/spotify-player
 # 	`BluetoothConnector`: https://github.com/lapfelix/BluetoothConnector
