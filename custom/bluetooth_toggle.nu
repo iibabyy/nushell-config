@@ -3,23 +3,27 @@
 # use `spotify_player` and `BluetoothConnector` to toggle the airpods connection
 # as well as the device on which spotify is playing between the current device and another.
 #
-# --- Note ---
-# 	use <tab> while typing the arguments for autocompletions with available devices.
+# --- Notes ---
+#	use `--no-spotify` to only toggle the airpods connection.
+#	use `--devices` to see available devices.
+# 	use <tab> while typing the arguments for autocompletion.
 #
 # --- Requirements ---
 # 	`spotify_player`: https://github.com/aome510/spotify-player
 # 	`BluetoothConnector`: https://github.com/lapfelix/BluetoothConnector
 @example "toggle between two devices" {toggle_airpods_and_spotify "Airpods Pro" "MacBook Pro" "iPhone"}
 @example "list available devices" {toggle_airpods_and_spotify --devices}
+@example "toggle airpods only" {toggle_airpods_and_spotify "Airpods Pro" "MacBook Pro" "iPhone" --no-spotify}
 export def toggle_airpods_and_spotify [
 	airpod_device?: string@bluetooth_devices # MAC address or bluetooth device name of the airpods
 	current_device_name?: string@spotify_devices # current device name on Spotify
 	other_device_name?: string@spotify_devices # device name to toggle with on Spotify
 	--devices # list available devices
+	--no-spotify # don't toggle spotify
 ]: nothing -> string {
 
-	check_args_are_valid $airpod_device $current_device_name $other_device_name $devices
-	check_dependencies
+	check_args_are_valid $airpod_device $current_device_name $other_device_name $devices $no_spotify
+	check_dependencies $no_spotify
 
 	if $devices {
 		return (list_devices)
@@ -28,6 +32,20 @@ export def toggle_airpods_and_spotify [
 	# parse $airpod_device into the arg needed by BluetoothConnector
 	let airpod_mac_address = parse_airpods_device $airpod_device
 
+	let return_message = if not $no_spotify {
+		let device_connected_to = toggle_spotify $airpod_mac_address $current_device_name $other_device_name
+		$"Airpods and Spotify toggled to ($device_connected_to)"
+	} else {
+		"Airpods toggled"
+	}
+
+	# toggle the bluetooth connection to the airpods
+	BluetoothConnector $airpod_mac_address
+
+	return $return_message
+}
+
+def toggle_spotify [airpod_mac_address: string, current_device_name: string, other_device_name: string]: nothing -> string {
 	let device_to_connect_to = do {
 		let is_currently_connected = (BluetoothConnector --status $airpod_mac_address | str trim) == "Connected"
 		if $is_currently_connected {
@@ -40,10 +58,7 @@ export def toggle_airpods_and_spotify [
 	# toggle the device to which spotify is connected
 	spotify_player connect --name $device_to_connect_to | complete
 
-	# toggle the bluetooth connection to the airpods
-	BluetoothConnector $airpod_mac_address
-
-	return $"Airpods toggled to ($device_to_connect_to)"
+	$device_to_connect_to
 }
 
 def list_devices [] {
@@ -73,24 +88,45 @@ def check_args_are_valid [
 	current_device_name?: string
 	other_device_name?: string
 	devices?: bool
+	no_spotify?: bool
 ] {
+	def raise_usage_error [] {
+		const command = $"(ansi cyan_bold)toggle_airpods_and_spotify(ansi reset)"
+
+		let usages = [
+				$"(ansi green_bold)Usages:(ansi reset)"
+				$"  ($command) <airpod_device> <current_device_name> <other_device_name>"
+				$"  ($command) --no-spotify <airpod_device>"
+				$"  ($command) --devices"
+			]
+			| str join "\n"
+
+		error make --unspanned {
+			code: "invalid arguments"
+			msg: $usages,
+			help: $"run `($command) --help` for more informations"
+		}
+	}
+
 	if $devices {
 		return true
 	}
 
-	if $airpod_device == null or $current_device_name == null or $other_device_name == null {
-		error make --unspanned {
-			code: "invalid arguments"
-			msg: $"Usages:\n\t(ansi cyan_bold)toggle_airpods_and_spotify(ansi reset) --devices\n\t(ansi cyan_bold)toggle_airpods_and_spotify(ansi reset) <airpod_device> <current_device_name> <other_device_name>",
-			help: $"run `(ansi cyan_bold)toggle_airpods_and_spotify(ansi reset) --help` for more informations"
-		}
+	if $airpod_device == null {
+		raise_usage_error
+	}
+
+	if $no_spotify {
+		return true
+	} else if $current_device_name == null or $other_device_name == null {
+		raise_usage_error
 	}
 
 	true
 }
 
-def check_dependencies [] {
-	if (which spotify_player | is-empty) {
+def check_dependencies [no_spotify?: bool] {
+	if not $no_spotify and (which spotify_player | is-empty) {
 		error make --unspanned {
 			code: "missing dependency"
 			msg: $"(ansi cyan_bold)spotify_player(ansi reset) not found"
@@ -117,10 +153,11 @@ def parse_airpods_device [value: string] {
 
 	let bluetooth_device = bluetooth_devices | where { $in.description == $value }
 	if ($bluetooth_device | is-empty) {
+		const command = $"(ansi cyan_bold)toggle_airpods_and_spotify(ansi reset)"
 		error make --unspanned {
 			code: "invalid bluetooth device"
 			msg: ("device '" + $value + "' not found")
-			help: $"run `(ansi cyan_bold)toggle_airpods_and_spotify(ansi reset) --devices` to see available devices"
+			help: $"run `($command) --devices` to see available devices"
 		}
 	}
 
