@@ -5,8 +5,8 @@ export use docker_prune.nu *
 export use bluetooth_toggle.nu *
 
 export-env {
-    use prompt.nu
+    # use prompt.nu
 
     # uncomment for background git fetch
-    # use hooks.nu
+    use hooks.nu
 }
