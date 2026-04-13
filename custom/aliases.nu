@@ -10,6 +10,18 @@ export alias gc = git commit '-m'
 export alias gcl = git clone
 export alias gp = git push
 export alias gst = git status
+
+use git_tree git_branches
+export def pr-to [
+	branch: string,
+	--push,
+	--merge
+] {
+    if $push { gp push push }
+    try { gh pr create --base prod --fill }
+    if $merge { gh pr merge --merge }
+}
+
 # Cargo Aliases
 export alias cr = cargo run
 export alias cb = cargo build
