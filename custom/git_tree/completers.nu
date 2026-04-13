@@ -3,14 +3,9 @@ export def no_completion [context: string] {
     []
 }
 # Completer for git branches
-export def git_branches [context: string] {
+export def git_branches [] {
     try {
-        let branches = (^git branch --list --format='%(refname:short)' | lines)
-        let branches = if ($context | is-empty) {
-            $branches
-        } else {
-            $branches | where { |branch| $branch =~ $context }
-        }
+        let branches = (^git branch --list --all --format='%(refname:short)' | lines)
         $branches | each { |branch| { value: $branch, description: "" } }
     } catch {
         []

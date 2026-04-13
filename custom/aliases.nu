@@ -16,9 +16,9 @@ export alias gcl = git clone
 export alias gp = git push
 export alias gst = git status
 
-use git_tree git_branches
+use git_tree/completers.nu git_branches
 export def pr-to [
-	branch: string,
+	branch: string@git_branches,
 	--push,
 	--merge
 ] {
