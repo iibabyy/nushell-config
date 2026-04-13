@@ -124,7 +124,8 @@ export def gtree-remove [
     let confirm_delete = if $yes {
         true
     } else if $use_gum {
-        (gum confirm $"Are you sure you want to delete ($worktree_path)?" --default)
+        gum-confirm $"Are you sure you want to delete ($worktree_path)?" --default
+        $env.LAST_EXIT_CODE == 0
     } else {
         (confirm-basic $"Are you sure you want to delete ($worktree_path)?" --default)
     }
@@ -137,7 +138,8 @@ export def gtree-remove [
     } else if $yes {
         true
     } else if $use_gum {
-        (gum confirm $"Do you want to delete the branch '($branch_name)'?" --affirmative "Yes" --negative "No")
+        gum-confirm $"Do you want to delete the branch '($branch_name)'?" --affirmative "Yes" --negative "No"
+        $env.LAST_EXIT_CODE == true
     } else {
         (confirm-basic $"Do you want to delete the branch '($branch_name)'?")
     }
@@ -531,4 +533,9 @@ export def get-worktree-path-by-branch [branch: string, workdir: path = .]: noth
     } else {
         $worktree_info.path
     }
+}
+
+def gum-confirm --wrapped [...rest]: nothing -> bool {
+    gum confirm ...$rest
+    $env.LAST_EXIT_CODE == 0
 }
