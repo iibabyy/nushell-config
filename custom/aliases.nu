@@ -22,7 +22,7 @@ export def pr-to [
 	--push,
 	--merge
 ] {
-    if $push { gp push push }
+    if $push { gp }
     try { gh pr create --base prod --fill }
     if $merge { gh pr merge --merge }
 }
