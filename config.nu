@@ -42,6 +42,8 @@ do --env {
     add ($cargo_home + "/bin")
 }
 
+$env.PQ_LIB_DIR = $"(brew --prefix libpq)/lib"
+
 # Zoxide
 # ---------------------
 const zoxide_path = ($nu.cache-dir + "zoxide.nu")

@@ -1,4 +1,5 @@
 mkdir $nu.cache-dir
+
 # Zoxide
 # ---------------------
 const zoxide_path = ($nu.cache-dir + "zoxide.nu")
