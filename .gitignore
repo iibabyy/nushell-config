@@ -5,4 +5,5 @@ zoxide.nu
 git-fetch-all.nu
 .cache
 CLAUDE.md
-
+plugin.msgpackz
+.DS_Store
