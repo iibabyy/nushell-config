@@ -10,6 +10,7 @@ export alias cl = claude
 export alias cx = codex
 export alias anu = agy $nu.default-config-dir
 export alias vnu = nvim $nu.default-config-dir
+export alias zu = zed $nu.default-config-dir
 
 # Git Aliases
 export alias g = git
