@@ -1,4 +1,5 @@
 history.txt
+history.sqlite3*
 .worktrees/
 nupm/*
 zoxide.nu
