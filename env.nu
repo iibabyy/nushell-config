@@ -1,3 +1,43 @@
+# ---------------------
+# PATH env var
+# ---------------------
+do --env {
+    use std/util "path add"
+
+    # Helper to add paths to the PATH env var
+    # (checks that the path exists before adding it)
+    def add --env [paths] {
+        let type = ($paths | describe)
+
+        let paths: list<string> = if $type == "string" {
+            [$paths]
+        } else if $type == "list<string>" {
+            $paths
+        }
+
+        for path in $paths {
+            if ($path | path exists) {
+                path add $path
+            }
+        }
+    }
+
+    # Homebrew (macOS)
+    add [
+        "/opt/homebrew/bin",
+        "/opt/homebrew/sbin",
+        "/opt/homebrew/opt/python@3.14/libexec/bin",
+    ]
+
+    add "/Users/ibaby/.bun/bin"
+
+    add "/usr/local/bin"
+    add ($env.HOME + "/.local/bin")
+
+    let cargo_home = ($env.CARGO_HOME? | default ($env.HOME + "/.cargo"))
+    add ($cargo_home + "/bin")
+}
+
 mkdir $nu.cache-dir
 
 # Zoxide

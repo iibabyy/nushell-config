@@ -1,61 +1,50 @@
-# Default editor (change this to your preferred editor, e.g. "nano", "code", "emacs")
-$env.config.buffer_editor = "agy"
+# ---------------------
+# Nushell config
+# use nu config --doc to see all available config options
+# ---------------------
 
-# Deactivate the banner when Nushell start
-$env.config.show_banner = false
+$env.config = ($env.config | merge deep {
+	# Deactivate the banner when Nushell start
+    show_banner: false,
 
-# Environment variables
-do --env {
-    use std/util "path add"
+    # Default editor (change this to your preferred editor, e.g. "nano", "code", "emacs")
+    buffer_editor: ["zed", "-n"],
 
-    # Helper to add paths to the PATH env var
-    # (checks that the path exists before adding it)
-    def add --env [paths] {
-        let type = ($paths | describe)
+    # use_kitty_protocol (bool): Enable the Kitty keyboard enhancement protocol.
+    use_kitty_protocol: true,
 
-        let paths: list<string> = if $type == "string" {
-            [$paths]
-        } else if $type == "list<string>" {
-            $paths
-        }
+    history: {
+		# history.file_format (string): The format used for the command history file.
+        file_format: "sqlite",
 
-        for path in $paths {
-            if ($path | path exists) {
-                path add $path
-            }
-        }
-    }
+		# history.max_size (int): Maximum number of entries allowed in the history.
+        max_size: 300_000,
 
-    # Homebrew (macOS)
-    add [
-        "/opt/homebrew/bin",
-        "/opt/homebrew/sbin",
-    ]
-
-    add "/Users/ibaby/.bun/bin"
-    add "/opt/homebrew/opt/python@3.14/libexec/bin"
-
-    add "/usr/local/bin"
-    add ($env.HOME + "/.local/bin")
-
-    let cargo_home = ($env.CARGO_HOME? | default ($env.HOME + "/.cargo"))
-    add ($cargo_home + "/bin")
-}
+		# history.isolation (bool): Controls history isolation between shell sessions.
+        isolation: true,
+    },
+})
 
 $env.PQ_LIB_DIR = $"(brew --prefix libpq)/lib"
 
+# ---------------------
 # Zoxide
 # ---------------------
 const zoxide_path = ($nu.cache-dir + "zoxide.nu")
 source $zoxide_path
 
+# ---------------------
 # Carapace
 # ---------------------
 const carapace_path = ($nu.cache-dir + "carapace.nu")
 source $carapace_path
 
+# ---------------------
 # Nupm Package Manager (Nushell plugin)
 # ---------------------
 overlay use nupm/nupm --prefix
 
+# ---------------------
+# Custom exports
+# ---------------------
 use custom *
