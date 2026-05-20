@@ -8,8 +8,8 @@ export alias gd = lazydocker
 export alias claude = claude --allow-dangerously-skip-permissions
 export alias cl = claude
 export alias cx = codex
-export alias anu = agy $nu.default-config-dir
-export alias vnu = nvim $nu.default-config-dir
+export alias gem = gemini
+export alias vu = nvim $nu.default-config-dir
 export alias zu = zed $nu.default-config-dir
 
 # Git Aliases
