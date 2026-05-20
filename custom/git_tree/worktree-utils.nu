@@ -317,9 +317,9 @@ export def has-npm []: nothing -> bool {
 export def run-bun-install [target: path]: nothing -> nothing {
     let package_json_path = $target | path join "package.json"
     if ($package_json_path | path exists) {
-        if has-bun {
+        if (has-bun) {
             do -i { ^bun install --cwd $target }
-        } else if has-npm {
+        } else if (has-npm) {
             do -i { ^npm install --prefix $target }
         }
     }
