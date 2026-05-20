@@ -33,12 +33,14 @@ do --env {
         "/opt/homebrew/bin",
         "/opt/homebrew/sbin",
         "/opt/homebrew/opt/python@3.14/libexec/bin",
+        "/opt/homebrew/Cellar/supabase-beta/2.100.2-beta.1/bin/",
     ]
 
-    add "/Users/ibaby/.bun/bin"
-
-    add "/usr/local/bin"
-    add ($env.HOME + "/.local/bin")
+    add [
+        "/Users/ibaby/.bun/bin",
+        "/usr/local/bin",
+        ($env.HOME + "/.local/bin"),
+    ]
 
     let cargo_home = ($env.CARGO_HOME? | default ($env.HOME + "/.cargo"))
     add ($cargo_home + "/bin")
