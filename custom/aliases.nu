@@ -20,6 +20,7 @@ export alias ga = git add
 export alias gc = git commit '-m'
 export alias gcl = git clone
 export alias gp = git push
+export alias gpl = git pull
 export alias gst = git status
 
 use git_tree/completers.nu git_branches
