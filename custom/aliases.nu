@@ -11,6 +11,8 @@ export alias cx = codex
 export alias gem = gemini
 export alias vu = nvim $nu.default-config-dir
 export alias zu = zed $nu.default-config-dir
+export alias npm = bun
+export alias npx = bunx
 
 # Git Aliases
 export alias g = git
