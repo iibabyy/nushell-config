@@ -1,12 +1,7 @@
 # ---------------------
 # Environment variables
 # ---------------------
-
-if ($env.ZED_TERM? == "true") {
-	$env.EDITOR = "zed"
-} else {
-	$env.EDITOR = "nvim"
-}
+$env.EDITOR = ($env.EDITOR? | default ["zed", "-n"])
 
 # ---------------------
 # PATH env var
