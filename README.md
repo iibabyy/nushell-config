@@ -1,31 +1,23 @@
-# Nushell Configuration
+A basic Nushell configuration with custom prompt, utilities and aliases.
 
-Personal Nushell configuration with custom prompt, utilities and aliases.
+[Start with this guide](https://www.nushell.sh/book/getting_started.html) to understand what Nushell is about.\
+You can [check my personal config](https://github.com/iibabyy/nushell-config/tree/my-config) for a real example.
 
 ## Quick Start
 
-### Install Nushell
-
-First, install [Nushell](https://www.nushell.sh/)
-
-**Using Homebrew:**
+**First, install Nushell**
 ```bash
-brew install nushell
+brew install nushell # using brew
+cargo install nu --locked # using cargo
+npm install -g nushell # using npm
 ```
 
-**Using cargo:**
-```bash
-cargo install nu --locked
-```
+> For more installation options, see the [official installation guide](https://www.nushell.sh/book/installation.html).
 
-For more installation options, see the [official installation guide](https://www.nushell.sh/book/installation.html).
-
-### Install This Configuration
-
+**Then, install This Configuration**
 ```bash
 nu -c 'git clone https://github.com/iibabyy/nushell-config.git $nu.default-config-dir --recursive'
 ```
-
 > Or if you already have a config directory, backup and clone:
 > ```bash
 > nu -c '
@@ -44,49 +36,17 @@ nu -c 'git clone https://github.com/iibabyy/nushell-config.git $nu.default-confi
 > '
 > ```
 
-### Run Nushell
-```bash
-nu
-```
-
-## Requirements
-
-- [Nushell](https://www.nushell.sh/)
-
 **Recommended:**
 - [carapace](https://github.com/carapace-sh/carapace) - For shell completions
 - [zoxide](https://github.com/ajeetdsouza/zoxide) - For smart directory jumping
 
-## Structure
-
-```
-╭── config.nu           # Main configuration file
-├── env.nu              # Environment setup
-├── custom/             # Custom modules
-│   └── ...
-└── completions/        # External completions
-```
-
-## Customization
-
 ### Default Editor
 
-The default editor is set to `vim`. To change it:
-
-1. Open the configuration file:
+The default editor is set to `vim`. To change it, open the configuration file:
 ```bash
 config nu
 ```
-
-2. Find the following line and replace `vim` with your preferred editor:
+Then find the following line and replace `vim` with your preferred editor:
 ```nu
 $env.config.buffer_editor = "vim"  # e.g. "nano", "code", "emacs"
 ```
-
-For more configuration options, see the [Nushell Configuration Guide](https://www.nushell.sh/book/configuration.html).
-
-### General
-
-Edit `config.nu` to modify imports and settings.
-
-Add your own modules in `custom/` and export them in `custom/mod.nu`.
