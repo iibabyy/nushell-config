@@ -8,14 +8,14 @@ $env.config = ($env.config | merge deep {
     show_banner: false,
 
     # Default editor (change this to your preferred editor, e.g. "nano", "code", "emacs")
-    buffer_editor: ($env.EDITOR? | default ["zed", "-n"]),
+    buffer_editor: ($env.EDITOR? | default [zed, -n]),
 
     # use_kitty_protocol (bool): Enable the Kitty keyboard enhancement protocol.
     use_kitty_protocol: true,
 
     history: {
 		# history.file_format (string): The format used for the command history file.
-        file_format: "sqlite",
+        file_format: sqlite,
 
 		# history.max_size (int): Maximum number of entries allowed in the history.
         max_size: 300_000,
