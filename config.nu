@@ -25,6 +25,14 @@ $env.config = ($env.config | merge deep {
     },
 })
 
+$env.config.keybindings ++= [{
+    name: completion_menu
+    modifier: control_shift
+    keycode: char_-
+    mode: emacs
+    event: { edit: undo }
+}]
+
 $env.PQ_LIB_DIR = $"(brew --prefix libpq)/lib"
 
 # ---------------------
