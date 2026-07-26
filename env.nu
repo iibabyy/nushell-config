@@ -1,7 +1,7 @@
 # ---------------------
 # Environment variables
 # ---------------------
-$env.EDITOR = ($env.EDITOR? | default ["zed", "-n"])
+$env.EDITOR = ($env.EDITOR? | default "zed")
 
 # ---------------------
 # PATH env var
