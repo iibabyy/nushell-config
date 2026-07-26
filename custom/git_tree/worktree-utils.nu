@@ -333,7 +333,13 @@ export def copy-to-clipboard [path: path]: nothing -> string {
             }
         } else if $nu.os-info.name == "linux" {
             {|path: string|
-                $path | xclip -selection clipboard
+                if (which wl-copy | is-not-empty) {
+                    $path | wl-copy
+                } else if (which xclip | is-not-empty) {
+                    $path | xclip -selection clipboard
+                } else if (which xsel | is-not-empty) {
+                    $path | xsel --clipboard
+                }
             }
         } else {
             return
@@ -468,7 +474,7 @@ export def confirm-basic [
 ]: nothing -> bool {
     let default_text = if $default { "Y/n" } else { "y/N" }
     print $"($prompt) \(($default_text)\)"
-    let response = (input "> " | str trim | str downcase)
+    let response = (input "> " | str trim | str lowercase)
     # Handle empty input (use default)
     if ($response | is-empty) {
         return $default

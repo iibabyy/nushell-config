@@ -33,19 +33,36 @@ $env.config.keybindings ++= [{
     event: { edit: undo }
 }]
 
-$env.PQ_LIB_DIR = $"(brew --prefix libpq)/lib"
+$env.PQ_LIB_DIR = if (which brew | is-not-empty) {
+    let libpq_prefix = (do { ^brew --prefix libpq } | complete)
+    if $libpq_prefix.exit_code == 0 {
+        ($libpq_prefix.stdout | str trim | path join "lib")
+    } else {
+        null
+    }
+} else if ("/usr/lib64/libpq.so" | path exists) {
+    "/usr/lib64"
+} else if ("/usr/lib/libpq.so" | path exists) {
+    "/usr/lib"
+} else {
+    null
+}
 
 # ---------------------
 # Zoxide
 # ---------------------
 const zoxide_path = ($nu.cache-dir + "zoxide.nu")
-source $zoxide_path
+if ($zoxide_path | path exists) {
+    source $zoxide_path
+}
 
 # ---------------------
 # Carapace
 # ---------------------
 const carapace_path = ($nu.cache-dir + "carapace.nu")
-source $carapace_path
+if ($carapace_path | path exists) {
+    source $carapace_path
+}
 
 # ---------------------
 # Nupm Package Manager (Nushell plugin)

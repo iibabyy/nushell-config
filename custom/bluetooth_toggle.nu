@@ -29,7 +29,7 @@ export def toggle_airpods_and_spotify [
 		return (list_devices)
 	}
 
-	# parse $airpod_device into the arg needed by BluetoothConnector
+	# parse $airpod_device into the arg needed by bluetooth manager
 	let airpod_mac_address = parse_airpods_device $airpod_device
 
 	let return_message = if not $no_spotify {
@@ -40,14 +40,41 @@ export def toggle_airpods_and_spotify [
 	}
 
 	# toggle the bluetooth connection to the airpods
-	BluetoothConnector $airpod_mac_address
+	toggle_bluetooth_device $airpod_mac_address
 
 	return $return_message
 }
 
+def is_bluetooth_connected [mac: string]: nothing -> bool {
+	if ($nu.os-info.name == "macos") {
+		(BluetoothConnector --status $mac | str trim) == "Connected"
+	} else if ($nu.os-info.name == "linux") {
+		let info = (do { bluetoothctl info $mac } | complete)
+		if $info.exit_code == 0 {
+			($info.stdout =~ "Connected: yes")
+		} else {
+			false
+		}
+	} else {
+		false
+	}
+}
+
+def toggle_bluetooth_device [mac: string] {
+	if ($nu.os-info.name == "macos") {
+		BluetoothConnector $mac
+	} else if ($nu.os-info.name == "linux") {
+		if (is_bluetooth_connected $mac) {
+			bluetoothctl disconnect $mac
+		} else {
+			bluetoothctl connect $mac
+		}
+	}
+}
+
 def toggle_spotify [airpod_mac_address: string, current_device_name: string, other_device_name: string]: nothing -> string {
 	let device_to_connect_to = do {
-		let is_currently_connected = (BluetoothConnector --status $airpod_mac_address | str trim) == "Connected"
+		let is_currently_connected = is_bluetooth_connected $airpod_mac_address
 		if $is_currently_connected {
 			$other_device_name
 		} else {
@@ -134,34 +161,45 @@ def check_dependencies [no_spotify?: bool] {
 		}
 	}
 
-	if (which BluetoothConnector | is-empty) {
+	if ($nu.os-info.name == "macos") and (which BluetoothConnector | is-empty) {
 		error make --unspanned {
 			code: "missing dependency"
 			msg: $"(ansi cyan_bold)BluetoothConnector(ansi reset) not found"
 			help: "see how to install it at https://github.com/lapfelix/BluetoothConnector"
 		}
+	} else if ($nu.os-info.name == "linux") and (which bluetoothctl | is-empty) {
+		error make --unspanned {
+			code: "missing dependency"
+			msg: $"(ansi cyan_bold)bluetoothctl(ansi reset) not found"
+			help: "install bluez package on your Linux distribution"
+		}
 	}
 }	
 
 # transform a MAC address or a device name
-# into the format needed for `BluetoothConnector` (xx-xx-xx-xx-xx-xx)
+# into the format needed for bluetooth operations
 def parse_airpods_device [value: string] {
 	let is_mac_address = ($value =~ '^([0-9a-fA-F]{2}[:-]){5}([0-9a-fA-F]{2})$')
-	if $is_mac_address {
-		return ($value | str replace ':' '-' --all)
-	}
-
-	let bluetooth_device = bluetooth_devices | where { $in.description == $value }
-	if ($bluetooth_device | is-empty) {
-		const command = $"(ansi cyan_bold)toggle_airpods_and_spotify(ansi reset)"
-		error make --unspanned {
-			code: "invalid bluetooth device"
-			msg: ("device '" + $value + "' not found")
-			help: $"run `($command) --devices` to see available devices"
+	let raw_mac = if $is_mac_address {
+		$value
+	} else {
+		let bluetooth_device = bluetooth_devices | where { $in.description == $value }
+		if ($bluetooth_device | is-empty) {
+			const command = $"(ansi cyan_bold)toggle_airpods_and_spotify(ansi reset)"
+			error make --unspanned {
+				code: "invalid bluetooth device"
+				msg: ("device '" + $value + "' not found")
+				help: $"run `($command) --devices` to see available devices"
+			}
 		}
+		$bluetooth_device.0.value
 	}
 
-	$bluetooth_device.0.value | str replace ':' '-' --all
+	if ($nu.os-info.name == "macos") {
+		$raw_mac | str replace ':' '-' --all
+	} else {
+		$raw_mac | str replace '-' ':' --all
+	}
 }
 
 def bluetooth_devices []: nothing -> list {
@@ -175,9 +213,14 @@ def bluetooth_devices []: nothing -> list {
 			| flatten 
 			| each {{ value: $in.data.Address, description: $in.name }}
 	} else if ($nu.os-info.name == "linux") {
-		bluetoothctl paired-devices
-			| lines
-			| parse "Device {value} {description}"
+		let output = (do { bluetoothctl devices } | complete)
+		if $output.exit_code == 0 {
+			$output.stdout
+				| lines
+				| parse -r 'Device\s+(?<value>\S+)\s+(?<description>.+)'
+		} else {
+			[]
+		}
 	} else {
 		[]
 	}

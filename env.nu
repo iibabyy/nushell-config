@@ -27,17 +27,20 @@ do --env {
         }
     }
 
-    # Homebrew (macOS)
+    # Homebrew (Linux & macOS)
     add [
+        "/home/linuxbrew/.linuxbrew/bin",
+        "/home/linuxbrew/.linuxbrew/sbin",
+        ($env.HOME + "/.linuxbrew/bin"),
+        ($env.HOME + "/.linuxbrew/sbin"),
         "/opt/homebrew/bin",
         "/opt/homebrew/sbin",
-        "/opt/homebrew/opt/python@3.14/libexec/bin",
-        "/opt/homebrew/Cellar/supabase-beta/2.100.2-beta.1/bin/",
     ]
 
     add [
-        "/Users/ibaby/.bun/bin",
+        ($env.HOME + "/.bun/bin"),
         "/usr/local/bin",
+        "/usr/local/sbin",
         ($env.HOME + "/.local/bin"),
     ]
 
@@ -50,15 +53,32 @@ mkdir $nu.cache-dir
 # Zoxide
 # ---------------------
 const zoxide_path = ($nu.cache-dir + "zoxide.nu")
-^/opt/homebrew/bin/zoxide init nushell | save --force $zoxide_path
+if (which zoxide | is-not-empty) {
+    ^zoxide init nushell | save --force $zoxide_path
+} else {
+    "" | save --force $zoxide_path
+}
+
 # Carapace
 # ---------------------
 const carapace_path = ($nu.cache-dir + "carapace.nu")
 $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
-/opt/homebrew/bin/carapace _carapace nushell | save --force $carapace_path
+if (which carapace | is-not-empty) {
+    ^carapace _carapace nushell | save --force $carapace_path
+} else {
+    "" | save --force $carapace_path
+}
 
 $env.CARGO_TARGET_DIR = ($env.HOME + "/.cargo/target")
+
 # Starship
 # ---------------------
-mkdir ($nu.data-dir | path join "vendor/autoload")
-/opt/homebrew/bin/starship init nu | save -f ($nu.data-dir | path join "vendor/autoload/starship.nu")
+let starship_vendor = ($nu.data-dir | path join "vendor/autoload")
+let starship_path = ($starship_vendor | path join "starship.nu")
+if (which starship | is-not-empty) {
+    mkdir $starship_vendor
+    ^starship init nu | save -f $starship_path
+} else if ($starship_path | path exists) {
+    rm -f $starship_path
+}
+
