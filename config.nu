@@ -49,22 +49,6 @@ $env.PQ_LIB_DIR = if (which brew | is-not-empty) {
 }
 
 # ---------------------
-# Zoxide
-# ---------------------
-const zoxide_path = ($nu.cache-dir + "zoxide.nu")
-if ($zoxide_path | path exists) {
-    source $zoxide_path
-}
-
-# ---------------------
-# Carapace
-# ---------------------
-const carapace_path = ($nu.cache-dir + "carapace.nu")
-if ($carapace_path | path exists) {
-    source $carapace_path
-}
-
-# ---------------------
 # Nupm Package Manager (Nushell plugin)
 # ---------------------
 overlay use nupm/nupm --prefix
