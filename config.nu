@@ -11,10 +11,6 @@
 
 # # Custom Completions
 # # ---------------------
-
-# # Nupm Package Manager (Nushell plugin)
-# # ---------------------
-# overlay use nupm/nupm --prefix
 # # Custom completions are loaded via the `custom` module.
 # # Basic completions (git, cargo, npm, make) are cloned under `custom/completions/`
 # # and loaded in `custom/mod.nu`.
