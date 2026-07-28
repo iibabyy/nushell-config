@@ -6,9 +6,13 @@ do --env {
 	def add --env [paths] {
 	    let type = ($paths | describe)
 
-	    let paths: list<string> = if $type == "string" { [$paths] }
-			else if $type == "list<string>" { $paths }
-			else { return }
+	    let paths: list<string> = if $type == "string" {
+			[$paths]
+		} else if $type == "list<string>" {
+			$paths
+		} else {
+			return
+		}
 
 	    for path in $paths {
 			# (checks that the path exists before adding it)
