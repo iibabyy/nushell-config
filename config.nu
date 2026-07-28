@@ -18,7 +18,7 @@ $env.config = ($env.config | merge deep {
         file_format: sqlite,
 
 		# history.max_size (int): Maximum number of entries allowed in the history.
-        max_size: 10_000,
+        max_size: 3_000,
 
 		# history.isolation (bool): Controls history isolation between shell sessions.
         isolation: true,
