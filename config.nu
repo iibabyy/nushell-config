@@ -67,3 +67,17 @@ overlay use nupm/nupm --prefix
 # Custom exports
 # ---------------------
 use custom *
+
+# ---------------------
+# nu_scripts completions
+# ---------------------
+use nu_scripts/custom-completions/cargo/cargo-completions.nu *
+use nu_scripts/custom-completions/claude/claude-completions.nu *
+use nu_scripts/custom-completions/curl/curl-completions.nu *
+use nu_scripts/custom-completions/docker/docker-completions.nu *
+use nu_scripts/custom-completions/gh/gh-completions.nu *
+use nu_scripts/custom-completions/git/git-completions.nu *
+use nu_scripts/custom-completions/make/make-completions.nu *
+use nu_scripts/custom-completions/npm/npm-completions.nu *
+use nu_scripts/custom-completions/rustup/rustup-completions.nu *
+use nu_scripts/custom-completions/zoxide/zoxide-completions.nu *
