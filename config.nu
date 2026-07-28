@@ -25,13 +25,23 @@ $env.config = ($env.config | merge deep {
     },
 })
 
-$env.config.keybindings ++= [{
-    name: completion_menu
-    modifier: control_shift
-    keycode: char_-
-    mode: emacs
-    event: { edit: undo }
-}]
+$env.config.keybindings ++= [
+    {
+        name: completion_menu
+        modifier: control_shift
+        keycode: char_-
+        mode: emacs
+        event: { edit: undo }
+    }
+    {
+        name: delete_word_backward
+        modifier: control
+        keycode: backspace
+        mode: [emacs, vi_normal, vi_insert]
+        event: { edit: BackspaceWord }
+    }
+]
+
 
 $env.PQ_LIB_DIR = if (which brew | is-not-empty) {
     let libpq_prefix = (do { ^brew --prefix libpq } | complete)
