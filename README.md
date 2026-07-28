@@ -37,7 +37,8 @@ nu -c 'git clone https://github.com/iibabyy/nushell-config.git $nu.default-confi
 > ```
 
 **Recommended:**
-- [carapace](https://github.com/carapace-sh/carapace) - For shell completions
+- [nu_scripts completions](https://github.com/nushell/nu_scripts/tree/main/custom-completions) - For shell completions. Basic completions (git, cargo, npm, make) are included under `custom/completions/`. Refer to the GitHub repository for more completions.
+- [External Completers](https://www.nushell.sh/cookbook/external_completers.html) - For setting up external completers (e.g., carapace, fish, zsh).
 - [zoxide](https://github.com/ajeetdsouza/zoxide) - For smart directory jumping
 
 ### Default Editor
