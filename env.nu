@@ -2,6 +2,7 @@
 # Environment variables
 # ---------------------
 $env.EDITOR = ($env.EDITOR? | default "zed")
+$env.VISUAL = ($env.VISUAL? | default "zed")
 
 # ---------------------
 # PATH env var
