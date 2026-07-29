@@ -36,6 +36,7 @@ do --env {
         ($env.HOME + "/.linuxbrew/sbin"),
         "/opt/homebrew/bin",
         "/opt/homebrew/sbin",
+        ($env.HOME + "/.opencode/bin"),
     ]
 
     add [
