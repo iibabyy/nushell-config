@@ -8,7 +8,7 @@ $env.config = ($env.config | merge deep {
     show_banner: false,
 
     # Default editor (change this to your preferred editor, e.g. "nano", "code", "emacs")
-    buffer_editor: ($env.EDITOR? | $env.VISUAL? | default "zed"),
+    buffer_editor: ($env.EDITOR? | $env.VISUAL? | default "code"),
 
     # use_kitty_protocol (bool): Enable the Kitty keyboard enhancement protocol.
     use_kitty_protocol: true,

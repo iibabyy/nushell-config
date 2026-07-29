@@ -1,8 +1,8 @@
 # ---------------------
 # Environment variables
 # ---------------------
-$env.EDITOR = ($env.EDITOR? | default "zed")
-$env.VISUAL = ($env.VISUAL? | default "zed")
+$env.EDITOR = ($env.EDITOR? | default "code")
+$env.VISUAL = ($env.VISUAL? | default "code")
 
 # ---------------------
 # PATH env var
