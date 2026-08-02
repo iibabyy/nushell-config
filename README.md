@@ -1,7 +1,7 @@
 A basic Nushell configuration with custom prompt, utilities and aliases.
 
 [Start with this guide](https://www.nushell.sh/book/getting_started.html) to understand what Nushell is about.\
-You can [check my personal config](https://github.com/iibabyy/nushell-config/tree/my-config) for a real example.
+You can [check my personal config](https://github.com/iibabyy/nushell-config/tree/my-linux-config) for a real example.
 
 ## Quick Start
 
