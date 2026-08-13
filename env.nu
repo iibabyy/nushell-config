@@ -1,8 +1,9 @@
 # ---------------------
 # Environment variables
 # ---------------------
-$env.EDITOR = ($env.EDITOR? | default "code")
-$env.VISUAL = ($env.VISUAL? | default "code")
+$env.EDITOR = default "nvim"
+$env.VISUAL = default "nvim"
+$env.XDG_CACHE_HOME = "/sgoinfre/goinfre/Perso/ibaby/.cache"
 
 # ---------------------
 # PATH env var
@@ -84,5 +85,3 @@ if (which starship | is-not-empty) {
 } else if ($starship_path | path exists) {
     rm -f $starship_path
 }
-
-

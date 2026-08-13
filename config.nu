@@ -8,7 +8,7 @@ $env.config = ($env.config | merge deep {
     show_banner: false,
 
     # Default editor (change this to your preferred editor, e.g. "nano", "code", "emacs")
-    buffer_editor: ($env.EDITOR? | $env.VISUAL? | default "code"),
+    buffer_editor: "nvim",
 
     # use_kitty_protocol (bool): Enable the Kitty keyboard enhancement protocol.
     use_kitty_protocol: true,
@@ -81,3 +81,4 @@ use nu_scripts/custom-completions/make/make-completions.nu *
 use nu_scripts/custom-completions/npm/npm-completions.nu *
 use nu_scripts/custom-completions/rustup/rustup-completions.nu *
 use nu_scripts/custom-completions/zoxide/zoxide-completions.nu *
+source "~/.cargo/env.nu"
