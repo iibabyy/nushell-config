@@ -68,6 +68,13 @@ overlay use nupm/nupm --prefix
 # ---------------------
 use custom *
 
+
+# Starship
+# ---------------------
+const vendor_autoload = ($nu.data-dir | path join "vendor/autoload")
+const starship_path = ($vendor_autoload | path join "starship.nu")
+source $starship_path
+
 # ---------------------
 # nu_scripts completions
 # ---------------------

@@ -53,7 +53,7 @@ do --env {
 
 mkdir $nu.cache-dir
 
-let vendor_autoload = ($nu.data-dir | path join "vendor/autoload")
+const vendor_autoload = ($nu.data-dir | path join "vendor/autoload")
 mkdir $vendor_autoload
 
 # Zoxide
@@ -69,19 +69,16 @@ if (which zoxide | is-not-empty) {
 # ---------------------
 let carapace_path = ($vendor_autoload | path join "carapace.nu")
 $env.CARAPACE_BRIDGES = 'zsh,fish,bash,inshellisense'
-if (which carapace | is-not-empty) {
+if not ($carapace_path | path exists) and (which carapace | is-not-empty) {
     ^carapace _carapace nushell | save --force $carapace_path
-} else if ($carapace_path | path exists) {
-    rm -f $carapace_path
 }
+
 
 $env.CARGO_TARGET_DIR = ($env.HOME + "/.cargo/target")
 
 # Starship
 # ---------------------
-let starship_path = ($vendor_autoload | path join "starship.nu")
-if (which starship | is-not-empty) {
+const starship_path = ($vendor_autoload | path join "starship.nu")
+if not ($starship_path | path exists) and (which starship | is-not-empty) {
     ^starship init nu | save -f $starship_path
-} else if ($starship_path | path exists) {
-    rm -f $starship_path
 }
