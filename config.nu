@@ -13,6 +13,9 @@ $env.config = ($env.config | merge deep {
     # use_kitty_protocol (bool): Enable the Kitty keyboard enhancement protocol.
     use_kitty_protocol: true,
 
+    # edit_mode (string): Sets the editing behavior of Reedline.
+    edit_mode: 'vi'
+
     history: {
 		# history.file_format (string): The format used for the command history file.
         file_format: sqlite,
