@@ -1,7 +1,10 @@
-export alias cfg = z ($env.HOME | path join ".config")
+export alias cfg = z ($env.HOME + "/.config")
 export alias c = clear
 export alias res = exec nu
-export alias vi = nvim
+export alias vi = nvim .
+export alias vu = nvim $nu.default-config-dir
+export alias vn = nvim ($env.HOME + "/.config/nvim")
+
 export alias l = ls
 export alias gg = lazygit
 export alias gd = lazydocker
@@ -10,7 +13,6 @@ export alias cl = claude
 export alias cx = codex
 export alias agy = agy --dangerously-skip-permissions
 export alias gem = gemini
-export alias vu = nvim $nu.default-config-dir
 export alias zu = zed $nu.default-config-dir
 # export alias npm = bun
 # export alias npx = bunx
