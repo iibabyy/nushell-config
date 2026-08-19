@@ -74,7 +74,7 @@ if not ($carapace_path | path exists) and (which carapace | is-not-empty) {
 }
 
 
-$env.CARGO_TARGET_DIR = ($env.HOME + "/.cargo/target")
+$env.CARGO_TARGET_DIR = ($env.HOME + "/.cargo-target")
 
 # Starship
 # ---------------------
